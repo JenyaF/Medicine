@@ -36,5 +36,9 @@ namespace Medicine.DAL.Repositories
         {
             db.Entry(item).State = EntityState.Modified;
         }
+        public Medicament Find(int id)
+        {
+          return db.Medicaments.Find(id);
+        }
     }
 }

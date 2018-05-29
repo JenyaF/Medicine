@@ -192,7 +192,10 @@
     <Content Include="Views\Home\CreatePatient.cshtml" />
     <Content Include="Views\Home\UpdateDoctor.cshtml" />
     <Content Include="Views\Home\UpdatePatient.cshtml" />
-    <Content Include="Views\Home\DeleteDoctor.cshtml" />
+    <Content Include="Views\Home\DeleteDoctorView.cshtml" />
+    <Content Include="Views\Medicament\GetListOfMedicaments.cshtml" />
+    <Content Include="Views\Medicament\Update.cshtml" />
+    <Content Include="Views\Medicament\Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -202,7 +205,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Medicament\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Medicine.BLL\Medicine.BLL.csproj">

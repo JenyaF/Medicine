@@ -13,5 +13,6 @@ namespace Medicine.BLL.Interfaces
         void Create(MedicamentDTO item);
         void Update(MedicamentDTO item);
         void Delete(int id);
+        MedicamentDTO Find(int id);
     }
 }

@@ -13,7 +13,6 @@ namespace Medicine.DAL.Entities
         public int Id { get; set; }
         public int MedicamentId { get; set; }
         public virtual Medicament Medicament { get; set; }
-        [Required]
         public string PatientId { get; set; }
         public virtual Patient Patient { get; set; }
         [Range(0.1, 1000)]

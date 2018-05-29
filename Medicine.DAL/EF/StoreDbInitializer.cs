@@ -19,7 +19,8 @@ namespace Medicine.DAL.EF
         {
             this.db = db;
             userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
-            roleManager = new ApplicationRoleManager(new RoleStore<ApplicationRole>(db));        
+            roleManager = new ApplicationRoleManager(new RoleStore<ApplicationRole>(db));
+            AddMedicament();
             var roles =new List<string>() { "doctor", "user", "admin", "patient" };
             foreach (var roleName in roles)
             {
@@ -104,6 +105,14 @@ namespace Medicine.DAL.EF
             db.ClientProfiles.Add(clientProfile);
             var patient = new Patient() { DoctorId = doctorId, historyOfTreatment = "some diagnosis", Id = user.Id };
             db.Patients.Add(patient);
+            db.SaveChanges();
+        }
+        void AddMedicament()
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                db.Medicaments.Add(new Medicament() { Name = $"medicament{i}" });
+            }
             db.SaveChanges();
         }
     }   

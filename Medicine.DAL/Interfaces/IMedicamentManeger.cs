@@ -13,5 +13,6 @@ namespace Medicine.DAL.Interfaces
         void Update(Medicament item);
         void Delete(int id);
         IEnumerable<Medicament> GetAll();
+        Medicament Find(int id);
     }
 }

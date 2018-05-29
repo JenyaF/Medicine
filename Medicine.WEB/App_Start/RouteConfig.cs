@@ -21,7 +21,7 @@ namespace Medicine
             routes.MapRoute(
                 name: "My",
                 url: "{controller}/{action}/{id}/{newId}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional,newId=UrlParameter.Optional }
+                defaults: new { controller = "Home", action = " DeleteDoctor", id = UrlParameter.Optional,newId=UrlParameter.Optional }
             );
         }
     }

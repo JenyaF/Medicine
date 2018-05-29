@@ -66,18 +66,28 @@ namespace Medicine.WEB.Controllers
                     {
                         IsPersistent = true
                     }, claim);
-                    //string role = UserService.GetRole(model.Email);
-                    if (HttpContext.User.IsInRole("admin"))
+                    //HttpContext.User.IsInRole("admin")
+                    string role = UserService.GetRole(model.Email);
+                    switch (role)
                     {
-                        return RedirectToAction("GetListOfDoctors");
+                        case "admin":
+                            {
+                                return RedirectToAction("GetListOfDoctors");
+                            }
+                        case "doctor":
+                            {
+                                return RedirectToAction("GetListOfPatients");
+                            }
+                        case "patient":
+                            {
+                                return RedirectToAction("GetListOfMedicaments");
+                            }
+                        default:
+                            {
+
+                                return RedirectToAction("Login");
+                            }
                     }
-                    if (HttpContext.User.IsInRole("doctor"))
-                    {
-                        return RedirectToAction("GetListOfPatients");
-                    }
-                    if (HttpContext.User.IsInRole("patient"))
-                        return RedirectToAction("GetListOfMedicaments");
-                    return RedirectToAction("Index", "Home");
                 }
             }
             return View(model);
@@ -150,7 +160,7 @@ namespace Medicine.WEB.Controllers
             return RedirectToAction("GetListOfDoctors");
         }
 
-        public ActionResult DeleteDoctor(string id)
+        public ActionResult DeleteDoctorView(string id)
         {
             ViewBag.id = id;
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO,DoctorView >()).CreateMapper();

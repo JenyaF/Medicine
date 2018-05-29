@@ -37,5 +37,10 @@ namespace Medicine.BLL.Services
             Database.Medicaments.Delete(id);
             Database.SaveAsync().GetAwaiter();
         }
+        public MedicamentDTO Find(int id)
+        {
+            Medicament item= Database.Medicaments.Find(id);
+            return new MedicamentDTO() { Id = item.Id, Name = item.Name };
+        }
     }
 }
