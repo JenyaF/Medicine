@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Medicine.WEB.Models.PatientView>
+
+@{
+    ViewBag.Title = "GetListOfPatients";
+}
+
+<h2>GetListOfPatients</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CreatePatient")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Password)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Surname)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.historyOfTreatment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DoctorId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Password)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Surname)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.historyOfTreatment)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DoctorId)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "EditPatient", new { id=item.Id }) |
+            @Html.ActionLink("List of recipes", "GetListOfRecipes", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "DeletePatient", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
