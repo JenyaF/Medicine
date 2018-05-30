@@ -7,7 +7,7 @@ using Medicine.BLL.Interfaces;
 using Medicine.DAL.Interfaces;
 using Medicine.BLL.DTO;
 using Medicine.DAL.Entities;
-
+using AutoMapper;
 namespace Medicine.BLL.Services
 {
     public class RecipeService:IRecipeService
@@ -25,19 +25,32 @@ namespace Medicine.BLL.Services
        public  void Create(RecipeDTO item)
         {
             Database.Recipes.Create(new Recipe() { AmountPerDay = item.AmountPerDay, Id = item.Id, MedicamentId = item.MedicamentId, PatientId = item.PatientId, Volume = item.Volume });
-            Database.SaveAsync().GetAwaiter();
+            Database.Save();
         }
 
         public void Update(RecipeDTO item)
         {
             Database.Recipes.Update(new Recipe() { AmountPerDay = item.AmountPerDay, Id = item.Id, MedicamentId = item.MedicamentId, PatientId = item.PatientId, Volume = item.Volume });
-            Database.SaveAsync().GetAwaiter();
+            Database.Save();
         }
 
         public void Delete(int id)
         {
             Database.Recipes.Delete(id);
-            Database.SaveAsync().GetAwaiter();
+            Database.Save();
+        }
+
+        public RecipeDTO Find(int id)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Recipe,RecipeDTO >()).CreateMapper();
+            var item = mapper.Map<Recipe,RecipeDTO >(Database.Recipes.Find(id));
+            return item;
+        }
+        public RecipeDTO Find(string nameOfMedicament,string patientId)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Recipe, RecipeDTO>()).CreateMapper();
+            var item = mapper.Map<Recipe, RecipeDTO>(Database.Recipes.Find(nameOfMedicament, patientId));
+            return item;
         }
     }
 }

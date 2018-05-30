@@ -53,8 +53,8 @@
             @Html.DisplayFor(modelItem => item.DateOfBirth)
         </td>
         <td>
-            @Html.ActionLink("Edit", "UpdateDoctor", new { id=item.Id }) |
-            @Html.ActionLink("Details", "GetListOfPatients", new { id=item.Id }) |
+            @Html.ActionLink("Edit", "UpdateDoctor", new { doctorId=item.Id }) |
+            @Html.ActionLink("Get list of patients", "GetListOfPatients", new { doctorId=item.Id }) |
             @Html.ActionLink("Delete", "DeleteDoctorView", new { id=item.Id })
         </td>
     </tr>

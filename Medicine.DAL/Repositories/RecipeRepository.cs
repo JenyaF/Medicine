@@ -31,10 +31,20 @@ namespace Medicine.DAL.Repositories
             {
                 db.Recipes.Remove(item);
             }
+            db.SaveChanges();
         }
         public void Update(Recipe item)
         {
             db.Entry(item).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+        public Recipe Find(int id)
+        {
+            return db.Recipes.Find(id);
+        }
+       public Recipe Find( string nameOfMedicament, string patientId)
+        {
+            return db.Recipes.Where(x=>x.PatientId==patientId&& x.Medicament.Name==nameOfMedicament).First();
         }
     }
 }

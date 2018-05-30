@@ -33,6 +33,7 @@ namespace Medicine.DAL.Repositories
             var item = db.Patients.Find(id);
             if (item != null)
             {
+                db.Recipes.RemoveRange(item.Recipes);
                 db.Patients.Remove(item);
             }
         }

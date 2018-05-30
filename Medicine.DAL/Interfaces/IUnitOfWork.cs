@@ -14,6 +14,7 @@ namespace Medicine.DAL.Interfaces
         IPatientManager Patients { get; }
         IRecipeManeger Recipes { get; }
         IMedicamentManeger Medicaments { get; }
-        Task SaveAsync();
+       // Task SaveAsync();
+        void Save();
     }
 }

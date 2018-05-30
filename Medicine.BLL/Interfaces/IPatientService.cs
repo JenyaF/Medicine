@@ -10,7 +10,7 @@ namespace Medicine.BLL.Interfaces
     public interface IPatientService
     {
         IUserService userService { get; set; }
-        string DoctorId { get; set; }
+       // string DoctorId { get; set; }
         IEnumerable<PatientDTO> GetAll();
         void Create(PatientDTO item);
         void Update(PatientDTO item);

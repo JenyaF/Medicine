@@ -25,17 +25,17 @@ namespace Medicine.BLL.Services
         public void Create(MedicamentDTO item)
         {
             Database.Medicaments.Create(new Medicament() { Id = item.Id, Name = item.Name });
-            Database.SaveAsync().GetAwaiter();
+            Database.Save();
         }
         public void Update(MedicamentDTO item)
         {
             Database.Medicaments.Update(new Medicament() { Id = item.Id, Name = item.Name });
-            Database.SaveAsync().GetAwaiter();
+            Database.Save();
         }
        public void Delete(int id)
         {
             Database.Medicaments.Delete(id);
-            Database.SaveAsync().GetAwaiter();
+            Database.Save();
         }
         public MedicamentDTO Find(int id)
         {

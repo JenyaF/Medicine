@@ -46,14 +46,14 @@ namespace Medicine.DAL.Repositories
         public IPatientManager Patients { get => patientRepository ?? new PatientRepository(db); }
         public IMedicamentManeger Medicaments { get => medicamentRepository ?? new MedicamentRepository(db); }
         public IRecipeManeger Recipes { get => recipeRepository ?? new RecipeRepository(db); }
-        /*public void Save()
-        {
-            db.SaveChanges();
-        }
-        */
+/*
         public async Task SaveAsync()
         {
             await db.SaveChangesAsync();
+        }*/
+        public void Save()
+        {
+            db.SaveChanges();
         }
         public void Dispose()
         {

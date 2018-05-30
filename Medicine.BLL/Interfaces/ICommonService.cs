@@ -8,9 +8,9 @@ namespace Medicine.BLL.Interfaces
 {
     public interface ICommonService<T> where T : class
     {
-        IEnumerable<T> GetAll();
+      /*  IEnumerable<T> GetAll();
         void Create(T item);
         void Update(T item);
-        void Delete(int id);
+        void Delete(int id);*/
     }
 }

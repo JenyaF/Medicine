@@ -21,6 +21,7 @@ namespace Medicine.DAL.Repositories
         public void Create(Doctor doctor)
         {
             db.Doctors.Add(doctor);
+            db.SaveChanges();
         }
 
         public IEnumerable<Doctor> GetAll()
@@ -39,11 +40,13 @@ namespace Medicine.DAL.Repositories
                         newDoctor.Patients.Add(obj);
                 db.Doctors.Remove(item);
             }
+            db.SaveChanges();
         }
 
         public void Update(Doctor item)
         {
             db.Entry(item).State = EntityState.Modified;
+            db.SaveChanges();
         }
         public Doctor Get(string id)
         {

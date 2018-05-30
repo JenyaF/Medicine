@@ -8,14 +8,14 @@ using Medicine.BLL.Infrastructure;
 
 namespace Medicine.BLL.Interfaces
 {
-    public interface IDoctorService
+    public interface IDoctorService 
     {
         IUserService userService { get; set; }
         IEnumerable<DoctorDTO> GetAll();
         void Create(DoctorDTO item);
         void Update(DoctorDTO item);
         void Delete(string id, string doctorId);
-        Task<OperationDetails> CreateAsync(DoctorDTO item);
+        //Task<OperationDetails> CreateAsync(DoctorDTO item);
        
     }
 }

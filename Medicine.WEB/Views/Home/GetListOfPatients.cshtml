@@ -7,13 +7,10 @@
 <h2>GetListOfPatients</h2>
 
 <p>
-    @Html.ActionLink("Create New", "CreatePatient")
+    @Html.ActionLink("Create New", "CreatePatient",new { doctorId = ViewBag.doctorId})
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Password)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.Email)
         </th>
@@ -26,17 +23,11 @@
         <th>
             @Html.DisplayNameFor(model => model.historyOfTreatment)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DoctorId)
-        </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Password)
-        </td>
+    <tr>      
         <td>
             @Html.DisplayFor(modelItem => item.Email)
         </td>
@@ -49,13 +40,11 @@
         <td>
             @Html.DisplayFor(modelItem => item.historyOfTreatment)
         </td>
+       
         <td>
-            @Html.DisplayFor(modelItem => item.DoctorId)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "UpdatePatient", new { id=item.Id }) |
-            @Html.ActionLink("List of recipes", "GetListOfRecipes", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "DeletePatient", new { id=item.Id })
+            @Html.ActionLink("Edit", "UpdatePatient", new { id = item.Id }) |
+            @Html.RouteLink("List of recipes", new { controller = "Recipe", action = "GetListOfRecipes",  id = item.Id }) |
+            @Html.ActionLink("Delete", "DeletePatient", new { id = item.Id })
         </td>
     </tr>
 }

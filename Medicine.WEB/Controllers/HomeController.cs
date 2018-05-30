@@ -34,7 +34,7 @@ namespace Medicine.WEB.Controllers
         }
         public ActionResult Index()
         {
-            
+            UserService.SetInitialData(new List<string>() { "doctor", "patient" });
             return RedirectToAction("Login");
         }
 
@@ -42,25 +42,24 @@ namespace Medicine.WEB.Controllers
         {
             return View(new LoginModel() { Email = "email1@ukr.net", Password = "qwerty654321" });
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginModel model)
+        public ActionResult Login(LoginModel model)
         {
-            await SetInitialDataAsync();
-
+            //SetInitialDataAsync().GetAwaiter();
+            
             if (ModelState.IsValid)
             {
                 UserDTO userDto = new UserDTO { Email = model.Email, Password = model.Password };
-                ClaimsIdentity claim = await UserService.Authenticate(userDto);
+                ClaimsIdentity claim = UserService.Authenticate(userDto);
                 if (claim == null)
                 {
                     ModelState.AddModelError("", "Неверный логин или пароль.");
                 }
                 else
                 {
-                   // string role = claim.RoleClaimType;
-                
+                    // string role = claim.RoleClaimType;
+
                     AuthenticationManager.SignOut();
                     AuthenticationManager.SignIn(new AuthenticationProperties
                     {
@@ -68,6 +67,7 @@ namespace Medicine.WEB.Controllers
                     }, claim);
                     //HttpContext.User.IsInRole("admin")
                     string role = UserService.GetRole(model.Email);
+
                     switch (role)
                     {
                         case "admin":
@@ -76,15 +76,14 @@ namespace Medicine.WEB.Controllers
                             }
                         case "doctor":
                             {
-                                return RedirectToAction("GetListOfPatients");
+                                return RedirectToAction($"GetListOfPatients/{UserService.GetId( userDto.Email)}");
                             }
                         case "patient":
                             {
-                                return RedirectToAction("GetListOfMedicaments");
+                                return RedirectToAction($"GetListOfMedicaments/{UserService.GetId(userDto.Email)}");
                             }
                         default:
                             {
-
                                 return RedirectToAction("Login");
                             }
                     }
@@ -92,6 +91,56 @@ namespace Medicine.WEB.Controllers
             }
             return View(model);
         }
+        /* [HttpPost]
+         [ValidateAntiForgeryToken]
+         public async Task<ActionResult> Login(LoginModel model)
+         {
+             await SetInitialDataAsync();
+
+             if (ModelState.IsValid)
+             {
+                 UserDTO userDto = new UserDTO { Email = model.Email, Password = model.Password };
+                 ClaimsIdentity claim = await UserService.Authenticate(userDto);
+                 if (claim == null)
+                 {
+                     ModelState.AddModelError("", "Неверный логин или пароль.");
+                 }
+                 else
+                 {
+                    // string role = claim.RoleClaimType;
+
+                     AuthenticationManager.SignOut();
+                     AuthenticationManager.SignIn(new AuthenticationProperties
+                     {
+                         IsPersistent = true
+                     }, claim);
+                     //HttpContext.User.IsInRole("admin")
+                     string role = UserService.GetRole(model.Email);
+
+                     switch (role)
+                     {
+                         case "admin":
+                             {
+                                 return RedirectToAction("GetListOfDoctors");
+                             }
+                         case "doctor":
+                             {
+                                 return RedirectToAction("GetListOfPatients");
+                             }
+                         case "patient":
+                             {
+                                 return RedirectToAction("GetListOfMedicaments");
+                             }
+                         default:
+                             {
+                                 return RedirectToAction("Login");
+                             }
+                     }
+                 }
+             }
+             return View(model);
+         }
+         */
         public ActionResult Logout()
         {
             AuthenticationManager.SignOut();
@@ -105,12 +154,17 @@ namespace Medicine.WEB.Controllers
               var doctors = mapper.Map<IEnumerable<DoctorDTO>, List<DoctorView>>(UserService.GetAll());
             return View(doctors);
         }
-        public ActionResult GetListOfPatients()
+        
+        public ActionResult GetListOfPatients(string doctorId)
         {
-            var doctorEmail = HttpContext.User.Identity.Name;
-            string doctorId = UserService.GetDoctorId(doctorEmail);
+            if (doctorId == null)
+            {
+                var doctorEmail = HttpContext.User.Identity.Name;
+                doctorId = UserService.GetId(doctorEmail);
+            }
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
             var patients = mapper.Map<IEnumerable<PatientDTO>, List<PatientView>>(UserService.GetAll(doctorId));
+            ViewBag.doctorId = doctorId;
             return View(patients);
         }
         public ActionResult RegisterDoctor()
@@ -134,13 +188,15 @@ namespace Medicine.WEB.Controllers
                     Role = "doctor",
                     Qualification=model.Qualification
                 };
-               // OperationDetails operationDetails = await UserService.CreateDoctorA(doctorDTO);
-                UserService.CreateAsync(doctorDTO).GetAwaiter();
-              /*  if (operationDetails.Succedeed)
-                    return View("SuccessRegister");
-                else
-                    ModelState.AddModelError(operationDetails.Property, operationDetails.Message);*/
-                    return RedirectToAction("Login", "Home");
+                // OperationDetails operationDetails = await UserService.CreateDoctorA(doctorDTO);
+                //  UserService.CreateAsync(doctorDTO).GetAwaiter();///////////////////////////////////!!!!
+
+                UserService.Create(doctorDTO);
+                /*  if (operationDetails.Succedeed)
+                      return View("SuccessRegister");
+                  else
+                      ModelState.AddModelError(operationDetails.Property, operationDetails.Message);*/
+                return RedirectToAction("Login", "Home");
             }
             return View(model);
         }
@@ -173,15 +229,15 @@ namespace Medicine.WEB.Controllers
             UserService.Delete(id,newId);
             return RedirectToAction("GetListOfDoctors");
         }
-        public ActionResult CreatePatient()
+        public ActionResult CreatePatient(string doctorId)
         {
-            return View(new PatientView() { Surname = "Smith", Name = "Ann", Email = "asdfgp@gmail.com", Password = "qwerty654321", historyOfTreatment="some diagnosis" });
+            return View(new PatientView() {DoctorId=doctorId ?? UserService.GetId(HttpContext.User.Identity.Name), Surname = "Smith", Name = "Ann", Email = "asdfgp@gmail.com", Password = "qwerty654321", historyOfTreatment="some diagnosis",});
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreatePatient(PatientView model)
         {
-            string doctorId = UserService.GetDoctorId(HttpContext.User.Identity.Name);
+           // string doctorId = UserService.GetDoctorId(HttpContext.User.Identity.Name);
             if (ModelState.IsValid)
             {
                var patientDTO=new PatientDTO
@@ -191,12 +247,13 @@ namespace Medicine.WEB.Controllers
                     Name = model.Name,
                     Surname = model.Surname,
                     Role = "patient",
-                   DoctorId=doctorId,
+                   DoctorId=model.DoctorId,
                    historyOfTreatment=model.historyOfTreatment,
                    
                 };
-                UserService.CreateAsync(patientDTO).GetAwaiter();
-                return RedirectToAction("GetListOfPatients", "Home");
+                // UserService.CreateAsync(patientDTO).GetAwaiter();
+                UserService.Create(patientDTO);
+                return RedirectToAction($"GetListOfPatients/{model.DoctorId}", "Home");
             }
             return View(model);
         }
@@ -207,6 +264,13 @@ namespace Medicine.WEB.Controllers
             var patient = mapper.Map<PatientDTO, PatientView>(UserService.GetPatient(id));
             return View(patient);
         }
+      /*  public ActionResult MovePatientView(string id)
+        {
+            ViewBag.id = id;
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientDTO, PatientView>()).CreateMapper();
+            var item = mapper.Map<IEnumerable<PatientDTO>, IEnumerable<PatientView>>(UserService.GetAll(id).Where(x => x.Id != id));
+            return View(item);
+        }*/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdatePatient(PatientView model)
@@ -214,13 +278,14 @@ namespace Medicine.WEB.Controllers
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientView, PatientDTO>()).CreateMapper();
             var patient = mapper.Map<PatientView, PatientDTO>(model);
             UserService.Update(patient);
-            return RedirectToAction("GetListOfPatients");
+            return RedirectToAction($"GetListOfPatients/{model.DoctorId}");
         }
 
         public ActionResult DeletePatient(string id)
         {
+           string doctorId= UserService.GetPatient(id).DoctorId;
             UserService.Delete(id);
-            return RedirectToAction("GetListOfPatients");
+            return RedirectToAction($"GetListOfPatients/{doctorId}");
         }
 
 
@@ -233,7 +298,10 @@ namespace Medicine.WEB.Controllers
 
 
 
-        private async Task SetInitialDataAsync()
+
+
+
+       /*private async Task SetInitialDataAsync()
         {
             await UserService.SetInitialData(new UserDTO
             {
@@ -244,7 +312,7 @@ namespace Medicine.WEB.Controllers
                 Role = "admin",
             }, new List<string> { "user", "admin","doctor","patient" });
 
-        }
+        }*/
     }
 }
 /*

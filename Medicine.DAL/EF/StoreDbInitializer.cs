@@ -6,10 +6,11 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Medicine.DAL.Identity;
 using Medicine.DAL.Repositories;
+using System;
 
 namespace Medicine.DAL.EF
 {
-    public class StoreDbInitializer  : DropCreateDatabaseAlways<ApplicationContext>
+    public class StoreDbInitializer  : DropCreateDatabaseIfModelChanges<ApplicationContext>
     {
         ApplicationRoleManager roleManager;
         ApplicationUserManager userManager;
@@ -105,6 +106,7 @@ namespace Medicine.DAL.EF
             db.ClientProfiles.Add(clientProfile);
             var patient = new Patient() { DoctorId = doctorId, historyOfTreatment = "some diagnosis", Id = user.Id };
             db.Patients.Add(patient);
+            AddRecipes(patient.Id);
             db.SaveChanges();
         }
         void AddMedicament()
@@ -114,6 +116,13 @@ namespace Medicine.DAL.EF
                 db.Medicaments.Add(new Medicament() { Name = $"medicament{i}" });
             }
             db.SaveChanges();
+        }
+        void AddRecipes(string patientid)
+        {
+            for(var i = 7; i > 0; i--)
+            {
+                db.Recipes.Add(new Recipe() { Volume = i - 0.1, AmountPerDay = i, FinishDate = DateTime.Now.AddMonths(i).ToShortDateString(), StartDate = DateTime.Now.ToShortDateString(),MedicamentId=i,PatientId=patientid });
+            }
         }
     }   
 }

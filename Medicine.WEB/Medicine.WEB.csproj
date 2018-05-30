@@ -167,6 +167,7 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MedicamentController.cs" />
+    <Compile Include="Controllers\RecipeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -189,13 +190,16 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\GetListOfDoctors.cshtml" />
     <Content Include="Views\Home\GetListOfPatients.cshtml" />
-    <Content Include="Views\Home\CreatePatient.cshtml" />
     <Content Include="Views\Home\UpdateDoctor.cshtml" />
     <Content Include="Views\Home\UpdatePatient.cshtml" />
     <Content Include="Views\Home\DeleteDoctorView.cshtml" />
     <Content Include="Views\Medicament\GetListOfMedicaments.cshtml" />
     <Content Include="Views\Medicament\Update.cshtml" />
     <Content Include="Views\Medicament\Create.cshtml" />
+    <Content Include="Views\Recipe\GetListOfRecipes.cshtml" />
+    <Content Include="Views\Recipe\Update.cshtml" />
+    <Content Include="Views\Recipe\Create.cshtml" />
+    <Content Include="Views\Home\CreatePatient.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

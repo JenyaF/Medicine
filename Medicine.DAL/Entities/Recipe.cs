@@ -19,5 +19,9 @@ namespace Medicine.DAL.Entities
         public double Volume { get; set; }
         [Range(1, 10)]
         public int AmountPerDay { get; set; }
+        [DataType(DataType.Date)]
+        public string StartDate { get; set; }
+        [DataType(DataType.Date)]
+        public string FinishDate { get; set; }
     }
 }

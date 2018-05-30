@@ -13,5 +13,7 @@ namespace Medicine.DAL.Interfaces
         void Update(Recipe item);
         void Delete(int id);
         IEnumerable<Recipe> GetAll(string patientId);
+        Recipe Find(int id);
+        Recipe Find(string nameOfMedicament, string patientId);
     }
 }

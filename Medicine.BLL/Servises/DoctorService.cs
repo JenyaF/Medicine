@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Medicine.BLL.Services
 {
-    class DoctorService : IDoctorService
+    class DoctorService /*: IDoctorService
     {
         public IUserService userService { get; set; }
         public async Task<OperationDetails> CreateAsync(DoctorDTO doctorDTO)
@@ -55,6 +55,7 @@ namespace Medicine.BLL.Services
                         (x, y) => new DoctorDTO() { Id = x.Id, Name = y.Name, Surname = y.Surname, Qualification = x.Qualification }).ToList();          
         }
 
-        
-    }
+        */
+    { }
+    
 }

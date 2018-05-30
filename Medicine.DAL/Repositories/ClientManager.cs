@@ -34,7 +34,7 @@ namespace Medicine.DAL.Repositories
          {
             return Database.ClientProfiles.FirstOrDefault(x => x.ApplicationUser.Email == email).Role;
          }
-        public string GetDoctorId(string email)
+        public string GetId(string email)
         {
             return Database.ClientProfiles.FirstOrDefault(x => x.ApplicationUser.Email == email).Id;
         }

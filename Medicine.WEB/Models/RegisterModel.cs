@@ -8,7 +8,7 @@ namespace Medicine.WEB.Models
 {
     public class RegisterModel
     {
-        [Required]
+      /*  [Required]
         public string Email { get; set; }
         [Required]
         [DataType(DataType.Password)]
@@ -18,7 +18,7 @@ namespace Medicine.WEB.Models
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; }*/
 
     }
 }
