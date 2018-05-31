@@ -15,11 +15,19 @@ namespace Medicine.BLL.Services
 {
     public class UserService : IUserService
     {
+        public Func<string, ApplicationUser> FindByEmail { get; set; }
+        public Func<ApplicationUser, string, IdentityResult> CreateUser { get; set; }
+        public Func<string, string,IdentityResult>AddToRole { get; set; }
+        public Func<string,string, ApplicationUser> Find { get; set; }
         public IUnitOfWork Database { get; set; }
 
         public UserService(IUnitOfWork uow)
         {
             Database = uow;
+            FindByEmail=(email)=> Database.UserManager.FindByEmail(email);
+            CreateUser=(user,userPassword)=> Database.UserManager.Create(user, userPassword);
+            AddToRole=(userId,role)=> Database.UserManager.AddToRole(userId, role);
+            Find = (email, password) => Database.UserManager.Find(email, password);
         }
 
         public IEnumerable<DoctorDTO> GetDoctors()
@@ -28,20 +36,17 @@ namespace Medicine.BLL.Services
         }
         private OperationDetails Create(UserDTO userDto)
         {
-            ApplicationUser user = Database.UserManager.FindByEmail(userDto.Email);
+
+            ApplicationUser user = FindByEmail(userDto.Email);// Database.UserManager.FindByEmail(userDto.Email);
             if (user == null)
             {
                 user = new ApplicationUser { Email = userDto.Email, UserName = userDto.Email };
-                Database.UserManager.Create(user, userDto.Password);
-                // добавляем роль
-                Database.UserManager.AddToRole(user.Id, userDto.Role);
-
-                // создаем профиль клиента
+                CreateUser(user, userDto.Password);// Database.UserManager.Create(user, userDto.Password);
+                AddToRole(user.Id, userDto.Role); // Database.UserManager.AddToRole(user.Id, userDto.Role);
                 ClientProfile clientProfile = new ClientProfile { Id = user.Id, Name = userDto.Name, DateOfBirth = userDto.DateOfBirth, Surname = userDto.Surname, Role = userDto.Role };
                 Database.ClientManager.Create(clientProfile);
                 Database.Save();
                 return new OperationDetails(true, "Registration is successful", "");
-
             }
             else
             {
@@ -52,9 +57,7 @@ namespace Medicine.BLL.Services
         public ClaimsIdentity Authenticate(UserDTO userDto)
         {
             ClaimsIdentity claim = null;
-            // находим пользователя
-            ApplicationUser user = Database.UserManager.Find(userDto.Email, userDto.Password);
-            // авторизуем его и возвращаем объект ClaimsIdentity
+            ApplicationUser user = Find(userDto.Email, userDto.Password);//Database.UserManager.Find(userDto.Email, userDto.Password);
             if (user != null)
                 claim = Database.UserManager.CreateIdentity(user,
                                             DefaultAuthenticationTypes.ApplicationCookie);
@@ -95,7 +98,7 @@ namespace Medicine.BLL.Services
             if (operationDetails.Succedeed)
             {
                 Database.Doctors.Create(new Doctor() { Id = doctorDTO.Id, Qualification = doctorDTO.Qualification });
-                Database.Save();//Async
+                Database.Save();
             }
             return operationDetails;
         }

@@ -21,32 +21,66 @@ namespace Medicine.BLL.Services.Tests
     [TestClass]
     public class UserServiceTests
     {
-        private UserService userService;
-
+        private static UserService userService;
+        private static Mock<IUnitOfWork> databaseMock;
+        [ClassInitialize]
+         public static void ClassInitialize(TestContext context)
+        {
+            databaseMock = new Mock<IUnitOfWork>();
+            databaseMock.Setup(x => x.ClientManager.Create(It.IsAny<ClientProfile>()));
+            userService = new UserService(databaseMock.Object);
+            userService.CreateUser = (user, userPassword) => new IdentityResult();
+            userService.AddToRole = (userId, role) => new IdentityResult();
+        }
         [TestMethod]
         public void AuthenticateTest()
-        {
-            Mock<IUnitOfWork> databaseMock = new Mock<IUnitOfWork>();
-         //   databaseMock.Setup(x => x.UserManager.Find                //only async!
+        {           
             Assert.Fail();
         }
 
-        [TestMethod()]
-        public void CreateDoctorTest()
+        [TestMethod]
+        public void Create_No_Exist_Doctor_Test()
         {
-            Mock<IUnitOfWork> databaseMock = new Mock<IUnitOfWork>();
-            //   databaseMock.
+            userService.FindByEmail = (email) => null;
+            databaseMock.Setup(x => x.Doctors.Create(It.IsAny<Doctor>()));
 
-            // databaseMock.Setup(x => x.Doctors.GetAll()).Returns(new List<Doctor>());
+            var result = userService.Create(new DoctorDTO());
 
-            databaseMock.Setup(x => x.UserManager.FindByEmail(It.IsAny<string>())).Returns<ApplicationUser>(null);
-            //  databaseMock.Setup(x => x.Save());
-
-            userService = new UserService(databaseMock.Object);
-            var result=  userService.Create(new DoctorDTO() { Surname = "Smith", Name = "Ann", Email = "asdfg@gmail.com", Password = "qwerty654321", Qualification = "low", DateOfBirth = "01.02.1970", Role = "doctor", UserName = "asdfg@gmail.com" });
             Assert.IsTrue(result.Succedeed);
         }
 
+        [TestMethod]
+        public void Create_Exist_Doctor_Test()
+        {
+
+            userService.FindByEmail = (email) => new ApplicationUser();
+            databaseMock.Setup(x => x.Doctors.Create(It.IsAny<Doctor>()));
+
+            var result = userService.Create(new DoctorDTO());
+
+            Assert.IsFalse(result.Succedeed);
+        }
+        [TestMethod]
+        public void Create_Exist_Patient_Test()
+        {
+
+            userService.FindByEmail = (email) => new ApplicationUser();
+            databaseMock.Setup(x => x.Patients.Create(It.IsAny<Patient>()));
+
+            var result = userService.Create(new PatientDTO());
+
+            Assert.IsFalse(result.Succedeed);
+        }
+        [TestMethod]
+        public void Create_No_Exist_Patient_Test()
+        {
+            userService.FindByEmail = (email) => null;
+            databaseMock.Setup(x => x.Patients.Create(It.IsAny<Patient>()));
+
+            var result = userService.Create(new PatientDTO());
+
+            Assert.IsTrue(result.Succedeed);
+        }
         [TestMethod()]
         public void UpdateTest()
         {
@@ -74,10 +108,6 @@ namespace Medicine.BLL.Services.Tests
         [TestMethod()]
         public void UpdateDoctorTest()
         {
-            Mock<IUnitOfWork> databaseMock = new Mock<IUnitOfWork>();
-            databaseMock.SetReturnsDefault(new ApplicationUser());
-            databaseMock.Setup(x => x.Doctors.Create(It.IsAny<Doctor>()));
-
             Assert.Fail();
         }
 

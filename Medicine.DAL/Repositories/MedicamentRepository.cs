@@ -40,5 +40,9 @@ namespace Medicine.DAL.Repositories
         {
           return db.Medicaments.Find(id);
         }
+        public Medicament Find(string name)
+        {
+            return db.Medicaments.First(x=>x.Name==name);
+        }
     }
 }

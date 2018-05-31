@@ -34,6 +34,7 @@ namespace Medicine.WEB.Controllers
         }
         public ActionResult Index()
         {
+           
             UserService.SetInitialData(new List<string>() { "doctor", "patient" });
             return RedirectToAction("Login");
         }
@@ -80,7 +81,7 @@ namespace Medicine.WEB.Controllers
                             }
                         case "patient":
                             {
-                                return RedirectToAction($"GetListOfMedicaments/{UserService.GetId(userDto.Email)}");
+                                return RedirectToAction($"GetListOfRecipes/{UserService.GetId(userDto.Email)}","Recipe");
                             }
                         default:
                             {
@@ -253,7 +254,7 @@ namespace Medicine.WEB.Controllers
                 };
                 // UserService.CreateAsync(patientDTO).GetAwaiter();
                 UserService.Create(patientDTO);
-                return RedirectToAction($"GetListOfPatients/{model.DoctorId}", "Home");
+                return RedirectToAction($"GetListOfPatients/{model.DoctorId}");
             }
             return View(model);
         }

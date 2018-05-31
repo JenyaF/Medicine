@@ -24,12 +24,12 @@ namespace Medicine.BLL.Services
         }
         public void Create(MedicamentDTO item)
         {
-            Database.Medicaments.Create(new Medicament() { Id = item.Id, Name = item.Name });
+            Database.Medicaments.Create(new Medicament() { Id = (int)item.Id, Name = item.Name });
             Database.Save();
         }
         public void Update(MedicamentDTO item)
         {
-            Database.Medicaments.Update(new Medicament() { Id = item.Id, Name = item.Name });
+            Database.Medicaments.Update(new Medicament() { Id = (int)item.Id, Name = item.Name });
             Database.Save();
         }
        public void Delete(int id)
@@ -40,6 +40,11 @@ namespace Medicine.BLL.Services
         public MedicamentDTO Find(int id)
         {
             Medicament item= Database.Medicaments.Find(id);
+            return new MedicamentDTO() { Id = item.Id, Name = item.Name };
+        }
+        public MedicamentDTO Find(string name)
+        {
+            Medicament item = Database.Medicaments.Find(name);
             return new MedicamentDTO() { Id = item.Id, Name = item.Name };
         }
     }

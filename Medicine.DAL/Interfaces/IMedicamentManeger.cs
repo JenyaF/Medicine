@@ -14,5 +14,7 @@ namespace Medicine.DAL.Interfaces
         void Delete(int id);
         IEnumerable<Medicament> GetAll();
         Medicament Find(int id);
+        Medicament Find(string name);
+
     }
 }

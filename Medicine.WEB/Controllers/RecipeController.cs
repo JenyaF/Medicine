@@ -57,13 +57,15 @@ namespace Medicine.WEB.Controllers
 
         public ActionResult Delete(int id)
         {
+            RecipeDTO recipe=RecipeService.Find(id);
             RecipeService.Delete(id);
-            return RedirectToAction("GetListOfRecipes");
+            return RedirectToAction($"GetListOfRecipes/{recipe.PatientId}");
         }
         public ActionResult Create()
         {
             var patientId = HttpContext.Session["patientId"].ToString();
-            return View(new RecipeView() { AmountPerDay = 2, FinishDate = DateTime.Now.Date.AddMonths(2).ToShortDateString(), StartDate = DateTime.Now.Date.ToShortDateString(), Volume = 1, PatientId = patientId });
+           
+            return View(new RecipeView() {MedicamentName="medicament1", AmountPerDay = 2, FinishDate = DateTime.Now.Date.AddMonths(2).ToShortDateString(), StartDate = DateTime.Now.Date.ToShortDateString(), Volume = 1, PatientId = patientId });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
