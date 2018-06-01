@@ -30,12 +30,19 @@ namespace Medicine.DAL.Repositories
             if (item != null)
             {
                 db.Recipes.Remove(item);
+                db.SaveChanges();
             }
-            db.SaveChanges();
+            
         }
         public void Update(Recipe item)
         {
-            db.Entry(item).State = EntityState.Modified;
+            var newItem= db.Recipes.Find(item.Id);
+            newItem.StartDate = item.StartDate;
+            newItem.FinishDate = item.FinishDate;
+            newItem.Volume = item.Volume;
+            newItem.AmountPerDay = item.AmountPerDay;
+            newItem.MedicamentId = item.MedicamentId;
+            db.Entry(newItem).State = EntityState.Modified;
             db.SaveChanges();
         }
         public Recipe Find(int id)
@@ -44,7 +51,7 @@ namespace Medicine.DAL.Repositories
         }
        public Recipe Find( string nameOfMedicament, string patientId)
         {
-            return db.Recipes.Where(x=>x.PatientId==patientId&& x.Medicament.Name==nameOfMedicament).First();
+            return db.Recipes.Where(x => x.PatientId == patientId && x.Medicament.Name == nameOfMedicament).FirstOrDefault();
         }
     }
 }

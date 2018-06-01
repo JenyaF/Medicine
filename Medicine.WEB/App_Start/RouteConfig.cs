@@ -23,6 +23,11 @@ namespace Medicine
                 url: "{controller}/{action}/{id}/{newId}",
                 defaults: new { controller = "Home", action = " DeleteDoctor", id = UrlParameter.Optional,newId=UrlParameter.Optional }
             );
+            routes.MapRoute(
+    name: "My1",
+    url: "{controller}/{action}/{doctorId}",
+    defaults: new { controller = "Home", action = " GetListOfPatients", doctorId = UrlParameter.Optional }
+);
         }
     }
 }

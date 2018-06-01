@@ -20,15 +20,19 @@ namespace Medicine.BLL.Services
         }
         public IEnumerable<RecipeDTO> GetAll(string patientId)
         {
-            return Database.Recipes.GetAll(patientId).Select(x=>new RecipeDTO() { AmountPerDay = x.AmountPerDay, Id = x.Id, MedicamentId = x.MedicamentId, PatientId = x.PatientId, Volume = x.Volume,FinishDate=x.FinishDate,StartDate=x.StartDate });
+            return Database.Recipes.GetAll(patientId).Select(x=>new RecipeDTO() { AmountPerDay = x.AmountPerDay, Id = x.Id, MedicamentId = x.MedicamentId, PatientId = x.PatientId, Volume = x.Volume,FinishDate=x.FinishDate,StartDate=x.StartDate ,MedicamentName=x.Medicament.Name});
         }
        public  void Create(RecipeDTO item)
         {
              Medicament medicament= Database.Medicaments.Find(item.MedicamentName);
             if (medicament != null)
             {
-                Database.Recipes.Create(new Recipe() { AmountPerDay = (int)item.AmountPerDay, Id = (int)item.Id, MedicamentId = medicament.Id, PatientId = item.PatientId, Volume = item.Volume, FinishDate = item.FinishDate, StartDate = item.StartDate });
-                Database.Save();
+                var existRecipe=Database.Recipes.Find(item.MedicamentName,item.PatientId);
+                if (existRecipe == null)
+                {
+                    Database.Recipes.Create(new Recipe() { AmountPerDay = (int)item.AmountPerDay, MedicamentId = medicament.Id, PatientId = item.PatientId, Volume = item.Volume, FinishDate = item.FinishDate, StartDate = item.StartDate });
+                    Database.Save();
+                }
             }
         }
 

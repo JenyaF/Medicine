@@ -18,5 +18,8 @@ namespace Medicine.WEB.Models
         public string Surname { get; set; }
         public string historyOfTreatment { get; set; }
         public string DoctorId { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        public string DateOfBirth { get; set; }
     }
 }

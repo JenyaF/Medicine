@@ -31,13 +31,22 @@ namespace Medicine.BLL.Services.Tests
             userService = new UserService(databaseMock.Object);
             userService.CreateUser = (user, userPassword) => new IdentityResult();
             userService.AddToRole = (userId, role) => new IdentityResult();
+            userService.CreateIdentify = (user, cookie) => new ClaimsIdentity();
         }
         [TestMethod]
-        public void AuthenticateTest()
-        {           
-            Assert.Fail();
+        public void Authenticate_ExistUser_Test()
+        {
+            userService.Find = (email, password) => new ApplicationUser();
+            var result = userService.Authenticate(new UserDTO() { Password = It.IsAny<string>(), Email = It.IsAny<string>() });
+            Assert.IsNotNull(result);
         }
-
+        [TestMethod]
+        public void Authenticate_NoExistUser_Test()
+        {
+            userService.Find = (email, password) => null;
+            var result = userService.Authenticate(new UserDTO() { Password = It.IsAny<string>(), Email = It.IsAny<string>() });
+            Assert.IsNull(result);
+        }
         [TestMethod]
         public void Create_No_Exist_Doctor_Test()
         {
@@ -80,59 +89,6 @@ namespace Medicine.BLL.Services.Tests
             var result = userService.Create(new PatientDTO());
 
             Assert.IsTrue(result.Succedeed);
-        }
-        [TestMethod()]
-        public void UpdateTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DeleteTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetAllTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void CreateTest2()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void UpdateDoctorTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DeleteTest1()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetAllTest1()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetDoctorTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetPatientTest()
-        {
-            Assert.Fail();
-        }
+        }     
     }
 }

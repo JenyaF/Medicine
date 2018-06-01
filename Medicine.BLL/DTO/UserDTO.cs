@@ -17,7 +17,10 @@ namespace Medicine.BLL.DTO
         public string Name { get; set; }
         [Required]
         public string Surname { get; set; }
+
         [DataType(DataType.Date)]
+       // [DisplayFormat(DataFormatString = "{0:dd'/'MM'/'yyyy}", ApplyFormatInEditMode = true)  ]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Required]
         public string DateOfBirth { get; set; }
         public string Role { get; set; }

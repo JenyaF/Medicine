@@ -19,6 +19,7 @@ namespace Medicine.BLL.Services
         public Func<ApplicationUser, string, IdentityResult> CreateUser { get; set; }
         public Func<string, string,IdentityResult>AddToRole { get; set; }
         public Func<string,string, ApplicationUser> Find { get; set; }
+        public Func<ApplicationUser,string,ClaimsIdentity> CreateIdentify { get; set; }
         public IUnitOfWork Database { get; set; }
 
         public UserService(IUnitOfWork uow)
@@ -28,6 +29,8 @@ namespace Medicine.BLL.Services
             CreateUser=(user,userPassword)=> Database.UserManager.Create(user, userPassword);
             AddToRole=(userId,role)=> Database.UserManager.AddToRole(userId, role);
             Find = (email, password) => Database.UserManager.Find(email, password);
+            CreateIdentify=(user,cookie) => Database.UserManager.CreateIdentity(user,
+                                            DefaultAuthenticationTypes.ApplicationCookie);
         }
 
         public IEnumerable<DoctorDTO> GetDoctors()
@@ -46,6 +49,7 @@ namespace Medicine.BLL.Services
                 ClientProfile clientProfile = new ClientProfile { Id = user.Id, Name = userDto.Name, DateOfBirth = userDto.DateOfBirth, Surname = userDto.Surname, Role = userDto.Role };
                 Database.ClientManager.Create(clientProfile);
                 Database.Save();
+                userDto.Id = user.Id;
                 return new OperationDetails(true, "Registration is successful", "");
             }
             else
@@ -59,8 +63,7 @@ namespace Medicine.BLL.Services
             ClaimsIdentity claim = null;
             ApplicationUser user = Find(userDto.Email, userDto.Password);//Database.UserManager.Find(userDto.Email, userDto.Password);
             if (user != null)
-                claim = Database.UserManager.CreateIdentity(user,
-                                            DefaultAuthenticationTypes.ApplicationCookie);
+                claim = CreateIdentify(user, DefaultAuthenticationTypes.ApplicationCookie);//Database.UserManager.CreateIdentity(user,  DefaultAuthenticationTypes.ApplicationCookie);                                         
             return claim;
         }
 
@@ -122,7 +125,7 @@ namespace Medicine.BLL.Services
                Join(Database.ClientManager.GetAll(),
                        x => x.Id,
                        y => y.Id,
-                       (x, y) => new DoctorDTO() { Id = x.Id, Name = y.Name, Surname = y.Surname, Qualification = x.Qualification }).ToList();
+                       (x, y) => new DoctorDTO() { Id = x.Id, Name = y.Name, Surname = y.Surname, Qualification = x.Qualification,DateOfBirth=y.DateOfBirth,Email=y.ApplicationUser.Email ,Role="doctor"}).ToList();
         }
 
         public OperationDetails Create(PatientDTO patientDTO)
@@ -155,17 +158,17 @@ namespace Medicine.BLL.Services
                Join(Database.ClientManager.GetAll(),
                        x => x.Id,
                        y => y.Id,
-                       (x, y) => new PatientDTO() { Id = x.Id, Name = y.Name, Surname = y.Surname, Email = x.ClientProfile.ApplicationUser.Email, historyOfTreatment = x.historyOfTreatment, DoctorId = x.DoctorId }).ToList();
+                       (x, y) => new PatientDTO() { Id = x.Id, Name = y.Name, Surname = y.Surname, Email = x.ClientProfile.ApplicationUser.Email, historyOfTreatment = x.historyOfTreatment, DoctorId = x.DoctorId,DateOfBirth=x.ClientProfile.DateOfBirth,Role="patient",UserName=y.ApplicationUser.UserName }).ToList();
         }
         public DoctorDTO GetDoctor(string id)
         {
             Doctor doctor = Database.Doctors.Get(id);
-            return new DoctorDTO() { Id = doctor.Id, Email = doctor.ClientProfile.ApplicationUser.Email, Name = doctor.ClientProfile.Name, Surname = doctor.ClientProfile.Surname, Qualification = doctor.Qualification, Role = "doctor", UserName = doctor.ClientProfile.ApplicationUser.UserName };
+            return new DoctorDTO() { Id = doctor.Id, Email = doctor.ClientProfile.ApplicationUser.Email, Name = doctor.ClientProfile.Name, Surname = doctor.ClientProfile.Surname, Qualification = doctor.Qualification, Role = "doctor", UserName = doctor.ClientProfile.ApplicationUser.UserName,DateOfBirth=doctor.ClientProfile.DateOfBirth };
         }
         public PatientDTO GetPatient(string id)
         {
             Patient patient = Database.Patients.Get(id);
-            return new PatientDTO() { Id = patient.Id, Email = patient.ClientProfile.ApplicationUser.Email, Name = patient.ClientProfile.Name, Surname = patient.ClientProfile.Surname, Password = patient.ClientProfile.ApplicationUser.PasswordHash, historyOfTreatment = patient.historyOfTreatment, Role = "patient", UserName = patient.ClientProfile.ApplicationUser.UserName, DoctorId = patient.DoctorId };
+            return new PatientDTO() { Id = patient.Id, Email = patient.ClientProfile.ApplicationUser.Email, Name = patient.ClientProfile.Name, Surname = patient.ClientProfile.Surname, historyOfTreatment = patient.historyOfTreatment, Role = "patient", UserName = patient.ClientProfile.ApplicationUser.UserName, DoctorId = patient.DoctorId,DateOfBirth=patient.ClientProfile.DateOfBirth };
 
         }
         

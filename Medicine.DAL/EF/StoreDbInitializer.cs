@@ -10,11 +10,11 @@ using System;
 
 namespace Medicine.DAL.EF
 {
-    public class StoreDbInitializer  : DropCreateDatabaseIfModelChanges<ApplicationContext>
+    public class StoreDbInitializer  : DropCreateDatabaseAlways<ApplicationContext>
     {
         ApplicationRoleManager roleManager;
         ApplicationUserManager userManager;
-        ClientManager clientManager;
+      //  ClientManager clientManager;
         ApplicationContext db;
         protected override void Seed(ApplicationContext db)
         {
@@ -86,7 +86,7 @@ namespace Medicine.DAL.EF
             var user = new ApplicationUser { Email = $"email{i}@ukr.net", UserName = $"email{i}@ukr.net" };
             userManager.Create(user, "qwerty654321");
             userManager.AddToRole(user.Id, "doctor");
-            var clientProfile = new ClientProfile { Id = user.Id, Name = $"name{i}",Surname=$"surname{i}" ,DateOfBirth="01.02.1970",Role="doctor"};
+            var clientProfile = new ClientProfile { Id = user.Id, Name = $"name{i}",Surname=$"surname{i}" ,DateOfBirth="1980-06-03",Role="doctor"};
             db.ClientProfiles.Add(clientProfile);
             var doctor = new Doctor() { Qualification = "Higth",Id=user.Id };
             db.Doctors.Add(doctor);
@@ -102,7 +102,7 @@ namespace Medicine.DAL.EF
             var user = new ApplicationUser { Email = $"email{i}{j}@ukr.net", UserName = $"email{i}{j}@ukr.net" };
             userManager.Create(user, "qwerty654321");
             userManager.AddToRole(user.Id, "patient");
-            var clientProfile = new ClientProfile { Id = user.Id, Name = $"name{i}{j}", Surname = $"surname{i}{j}", DateOfBirth = "01.02.1970", Role = "patient" };
+            var clientProfile = new ClientProfile { Id = user.Id, Name = $"name{i}{j}", Surname = $"surname{i}{j}", DateOfBirth = "1970-01-02", Role = "patient" };
             db.ClientProfiles.Add(clientProfile);
             var patient = new Patient() { DoctorId = doctorId, historyOfTreatment = "some diagnosis", Id = user.Id };
             db.Patients.Add(patient);
@@ -121,7 +121,8 @@ namespace Medicine.DAL.EF
         {
             for(var i = 7; i > 0; i--)
             {
-                db.Recipes.Add(new Recipe() { Volume = i - 0.1, AmountPerDay = i, FinishDate = DateTime.Now.AddMonths(i).ToShortDateString(), StartDate = DateTime.Now.ToShortDateString(),MedicamentId=i,PatientId=patientid });
+               
+            db.Recipes.Add(new Recipe() { Volume = i - 0.1, AmountPerDay = i, FinishDate ="2018-10-01", StartDate = "2018-06-30",MedicamentId=i,PatientId=patientid });
             }
         }
     }   

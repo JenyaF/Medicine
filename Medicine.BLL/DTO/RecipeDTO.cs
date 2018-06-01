@@ -21,8 +21,10 @@ namespace Medicine.BLL.DTO
         [Range(1, 10)]
         public int? AmountPerDay { get; set; }
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public string StartDate { get; set; }
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public string FinishDate { get; set; }
     }
 }

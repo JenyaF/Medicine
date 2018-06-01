@@ -34,7 +34,9 @@ namespace Medicine.DAL.Repositories
         }
         public void Update(Medicament item)
         {
-            db.Entry(item).State = EntityState.Modified;
+           var newItem= db.Medicaments.Find(item.Id);
+            newItem.Name = item.Name;
+            db.Entry(newItem).State = EntityState.Modified;
         }
         public Medicament Find(int id)
         {
@@ -42,7 +44,7 @@ namespace Medicine.DAL.Repositories
         }
         public Medicament Find(string name)
         {
-            return db.Medicaments.First(x=>x.Name==name);
+            return db.Medicaments.FirstOrDefault(x=>x.Name==name);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Medicine.WEB.Controllers
 
         public ActionResult Login()
         {
-            return View(new LoginModel() { Email = "email1@ukr.net", Password = "qwerty654321" });
+            return View(new LoginModel() { Email = "email@ukr.net", Password = "qwerty654321" });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -151,8 +151,9 @@ namespace Medicine.WEB.Controllers
        
         public ActionResult GetListOfDoctors()
         {
-              var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
-              var doctors = mapper.Map<IEnumerable<DoctorDTO>, List<DoctorView>>(UserService.GetAll());
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
+            var doctors = mapper.Map<IEnumerable<DoctorDTO>, List<DoctorView>>(UserService.GetAll());
+            ModelState.AddModelError("field", "error");
             return View(doctors);
         }
         
@@ -170,7 +171,7 @@ namespace Medicine.WEB.Controllers
         }
         public ActionResult RegisterDoctor()
         {
-            return View(new DoctorView() { Surname = "Smith", Name = "Ann", Email = "asdfg@gmail.com", Password = "qwerty654321", Qualification = "low",DateOfBirth="01.02.1970" });
+            return View(new DoctorView() { Surname = "Smith", Name = "Ann", Email = "asdfg@gmail.com", Password = "qwerty654321", Qualification = "low",DateOfBirth="2000-09-28" });
         }
 
         [HttpPost]
@@ -185,9 +186,12 @@ namespace Medicine.WEB.Controllers
                     Email = model.Email,
                     Password = model.Password,
                     Name = model.Name,
-                    Surname=model.Surname,
+                    Surname = model.Surname,
                     Role = "doctor",
-                    Qualification=model.Qualification
+                    Qualification = model.Qualification,
+                    DateOfBirth = model.DateOfBirth
+
+                
                 };
                 // OperationDetails operationDetails = await UserService.CreateDoctorA(doctorDTO);
                 //  UserService.CreateAsync(doctorDTO).GetAwaiter();///////////////////////////////////!!!!
@@ -197,7 +201,8 @@ namespace Medicine.WEB.Controllers
                       return View("SuccessRegister");
                   else
                       ModelState.AddModelError(operationDetails.Property, operationDetails.Message);*/
-                return RedirectToAction("Login", "Home");
+
+                return RedirectToAction("GetListOfDoctors");
             }
             return View(model);
         }
@@ -232,7 +237,7 @@ namespace Medicine.WEB.Controllers
         }
         public ActionResult CreatePatient(string doctorId)
         {
-            return View(new PatientView() {DoctorId=doctorId ?? UserService.GetId(HttpContext.User.Identity.Name), Surname = "Smith", Name = "Ann", Email = "asdfgp@gmail.com", Password = "qwerty654321", historyOfTreatment="some diagnosis",});
+            return View(new PatientView() {DoctorId=doctorId ?? UserService.GetId(HttpContext.User.Identity.Name), Surname = "Smith", Name = "Ann", Email = "asdfgp@gmail.com", Password = "qwerty654321", historyOfTreatment="some diagnosis",DateOfBirth="01.02.1998"});
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -241,20 +246,22 @@ namespace Medicine.WEB.Controllers
            // string doctorId = UserService.GetDoctorId(HttpContext.User.Identity.Name);
             if (ModelState.IsValid)
             {
-               var patientDTO=new PatientDTO
+                var patientDTO = new PatientDTO
                 {
                     Email = model.Email,
                     Password = model.Password,
                     Name = model.Name,
                     Surname = model.Surname,
                     Role = "patient",
-                   DoctorId=model.DoctorId,
+                    DoctorId = model.DoctorId,
                    historyOfTreatment=model.historyOfTreatment,
+                  DateOfBirth=model.DateOfBirth
                    
                 };
+                
                 // UserService.CreateAsync(patientDTO).GetAwaiter();
                 UserService.Create(patientDTO);
-                return RedirectToAction($"GetListOfPatients/{model.DoctorId}");
+                return RedirectToAction($"GetListOfPatients",new { doctorId = patientDTO.DoctorId });
             }
             return View(model);
         }
@@ -279,14 +286,14 @@ namespace Medicine.WEB.Controllers
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientView, PatientDTO>()).CreateMapper();
             var patient = mapper.Map<PatientView, PatientDTO>(model);
             UserService.Update(patient);
-            return RedirectToAction($"GetListOfPatients/{model.DoctorId}");
+            return RedirectToAction($"GetListOfPatients",new { doctorId = model.DoctorId });
         }
 
         public ActionResult DeletePatient(string id)
         {
-           string doctorId= UserService.GetPatient(id).DoctorId;
+           string doctorid= UserService.GetPatient(id).DoctorId;
             UserService.Delete(id);
-            return RedirectToAction($"GetListOfPatients/{doctorId}");
+            return RedirectToAction($"GetListOfPatients", new { doctorId = doctorid });
         }
 
 

@@ -52,7 +52,7 @@ namespace Medicine.WEB.Controllers
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<RecipeView,RecipeDTO >()).CreateMapper();
             var item = mapper.Map<RecipeView,RecipeDTO >(model);
             RecipeService.Update(item);
-            return RedirectToAction("GetListOfRecipes");
+            return RedirectToAction($"GetListOfRecipes/{item.PatientId}");
         }
 
         public ActionResult Delete(int id)
@@ -63,19 +63,18 @@ namespace Medicine.WEB.Controllers
         }
         public ActionResult Create()
         {
-            var patientId = HttpContext.Session["patientId"].ToString();
-           
+            var patientId = HttpContext.Session["patientId"].ToString(); 
             return View(new RecipeView() {MedicamentName="medicament1", AmountPerDay = 2, FinishDate = DateTime.Now.Date.AddMonths(2).ToShortDateString(), StartDate = DateTime.Now.Date.ToShortDateString(), Volume = 1, PatientId = patientId });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(RecipeView model,string nameOFMedicament)
+        public ActionResult Create(RecipeView model)//,string nameOFMedicament)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<RecipeView, RecipeDTO>()).CreateMapper();
             var item = mapper.Map<RecipeView, RecipeDTO>(model);
           //  RecipeService
             RecipeService.Create(item);
-            return RedirectToAction("GetListOfRecipes");
+            return RedirectToAction($"GetListOfRecipes/{item.PatientId}");
         }
     }
 }
