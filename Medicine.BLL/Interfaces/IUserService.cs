@@ -10,12 +10,9 @@ namespace Medicine.BLL.Interfaces
     public interface IUserService : IDisposable
     {
         IUnitOfWork Database { get; set; }
-      //  Task<OperationDetails> CreateAsync(UserDTO userDto);
-      //  Task<ClaimsIdentity> AuthenticateAsync(UserDTO userDto);
         ClaimsIdentity Authenticate(UserDTO userDto);
-       // Task SetInitialData(UserDTO adminDto, List<string> roles);
         string GetRole(string email);
-       void SetInitialData( List<string> roles);
+        void SetInitialData( List<string> roles);
         IEnumerable<PatientDTO> GetAll(string doctorId);
         void Update(PatientDTO patientDTO);
         OperationDetails Create(PatientDTO patientDTO);
@@ -25,7 +22,6 @@ namespace Medicine.BLL.Interfaces
         void Delete(string id, string doctorId);
         void Update(DoctorDTO doctorDTO);
         string GetId(string email);
-
         DoctorDTO GetDoctor(string id);
         PatientDTO GetPatient(string id);
     }

@@ -18,10 +18,14 @@ namespace Medicine.WEB
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            
-             NinjectModule registrations = new NinjectRegistrations();
+
+            ModelValidatorProviders.Providers.Clear();
+            ModelValidatorProviders.Providers.Add(new DataErrorInfoModelValidatorProvider());
+
+            NinjectModule registrations = new NinjectRegistrations();
              var kernel = new StandardKernel(registrations);
              DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
+            
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Medicine.WEB.App_Start
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Home/Login")
             });
-            
+
         }
 
          private IUserService CreateUserService()

@@ -163,7 +163,7 @@ namespace Medicine.BLL.Services
         public DoctorDTO GetDoctor(string id)
         {
             Doctor doctor = Database.Doctors.Get(id);
-            return new DoctorDTO() { Id = doctor.Id, Email = doctor.ClientProfile.ApplicationUser.Email, Name = doctor.ClientProfile.Name, Surname = doctor.ClientProfile.Surname, Qualification = doctor.Qualification, Role = "doctor", UserName = doctor.ClientProfile.ApplicationUser.UserName,DateOfBirth=doctor.ClientProfile.DateOfBirth };
+            return new DoctorDTO() {Id = doctor.Id, Email = doctor.ClientProfile.ApplicationUser.Email, Name = doctor.ClientProfile.Name, Surname = doctor.ClientProfile.Surname, Qualification = doctor.Qualification, Role = "doctor", UserName = doctor.ClientProfile.ApplicationUser.UserName,DateOfBirth=doctor.ClientProfile.DateOfBirth };
         }
         public PatientDTO GetPatient(string id)
         {

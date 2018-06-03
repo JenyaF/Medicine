@@ -30,7 +30,7 @@ namespace Medicine.BLL.Services
                 var existRecipe=Database.Recipes.Find(item.MedicamentName,item.PatientId);
                 if (existRecipe == null)
                 {
-                    Database.Recipes.Create(new Recipe() { AmountPerDay = (int)item.AmountPerDay, MedicamentId = medicament.Id, PatientId = item.PatientId, Volume = item.Volume, FinishDate = item.FinishDate, StartDate = item.StartDate });
+                    Database.Recipes.Create(new Recipe() { AmountPerDay = item.AmountPerDay, MedicamentId = medicament.Id, PatientId = item.PatientId, Volume = item.Volume, FinishDate = item.FinishDate, StartDate = item.StartDate });
                     Database.Save();
                 }
             }
@@ -41,7 +41,7 @@ namespace Medicine.BLL.Services
             Medicament medicament = Database.Medicaments.Find(item.MedicamentName);
             if (medicament != null)
             {
-                Database.Recipes.Update(new Recipe() { AmountPerDay = (int)item.AmountPerDay, Id = (int)item.Id, MedicamentId = (int)medicament.Id, PatientId = item.PatientId, Volume = item.Volume, FinishDate = item.FinishDate, StartDate = item.StartDate });
+                Database.Recipes.Update(new Recipe() { AmountPerDay = item.AmountPerDay, Id = item.Id, MedicamentId = medicament.Id, PatientId = item.PatientId, Volume = item.Volume, FinishDate = item.FinishDate, StartDate = item.StartDate });
                 Database.Save();
             }
         }
@@ -56,7 +56,7 @@ namespace Medicine.BLL.Services
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Recipe,RecipeDTO >()).CreateMapper();
             var item = mapper.Map<Recipe,RecipeDTO >(Database.Recipes.Find(id));
-            item.MedicamentName= Database.Medicaments.Find((int)item.MedicamentId)?.Name;
+            item.MedicamentName= Database.Medicaments.Find(item.MedicamentId)?.Name;
             return item;
         }
         public RecipeDTO Find(string nameOfMedicament,string patientId)

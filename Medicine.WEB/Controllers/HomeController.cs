@@ -3,14 +3,13 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity.Owin;
-using System.Threading.Tasks;
 using Medicine.WEB.Models;
 using Medicine.BLL.DTO;
 using System.Security.Claims;
 using Medicine.BLL.Interfaces;
-using Medicine.BLL.Infrastructure;
 using AutoMapper;
 using System.Linq;
+using Medicine.BLL.Infrastructure;
 
 namespace Medicine.WEB.Controllers
 {
@@ -34,8 +33,8 @@ namespace Medicine.WEB.Controllers
         }
         public ActionResult Index()
         {
-           
-            UserService.SetInitialData(new List<string>() { "doctor", "patient" });
+
+            UserService.SetInitialData(new List<string>());
             return RedirectToAction("Login");
         }
 
@@ -43,32 +42,26 @@ namespace Medicine.WEB.Controllers
         {
             return View(new LoginModel() { Email = "email@ukr.net", Password = "qwerty654321" });
         }
-        [HttpPost]
         [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult Login(LoginModel model)
         {
-            //SetInitialDataAsync().GetAwaiter();
-            
             if (ModelState.IsValid)
             {
                 UserDTO userDto = new UserDTO { Email = model.Email, Password = model.Password };
                 ClaimsIdentity claim = UserService.Authenticate(userDto);
                 if (claim == null)
                 {
-                    ModelState.AddModelError("", "Неверный логин или пароль.");
+                    ViewBag.Message = "Incorrect login or password.";
                 }
                 else
                 {
-                    // string role = claim.RoleClaimType;
-
                     AuthenticationManager.SignOut();
                     AuthenticationManager.SignIn(new AuthenticationProperties
                     {
                         IsPersistent = true
                     }, claim);
-                    //HttpContext.User.IsInRole("admin")
                     string role = UserService.GetRole(model.Email);
-
                     switch (role)
                     {
                         case "admin":
@@ -77,86 +70,37 @@ namespace Medicine.WEB.Controllers
                             }
                         case "doctor":
                             {
-                                return RedirectToAction($"GetListOfPatients/{UserService.GetId( userDto.Email)}");
+                                return RedirectToAction($"GetListOfPatients/{UserService.GetId(userDto.Email)}");
                             }
                         case "patient":
                             {
-                                return RedirectToAction($"GetListOfRecipes/{UserService.GetId(userDto.Email)}","Recipe");
+                                return RedirectToAction($"GetListOfRecipes/{UserService.GetId(userDto.Email)}", "Recipe");
                             }
                         default:
                             {
-                                return RedirectToAction("Login");
+                                break;
                             }
                     }
                 }
             }
             return View(model);
         }
-        /* [HttpPost]
-         [ValidateAntiForgeryToken]
-         public async Task<ActionResult> Login(LoginModel model)
-         {
-             await SetInitialDataAsync();
 
-             if (ModelState.IsValid)
-             {
-                 UserDTO userDto = new UserDTO { Email = model.Email, Password = model.Password };
-                 ClaimsIdentity claim = await UserService.Authenticate(userDto);
-                 if (claim == null)
-                 {
-                     ModelState.AddModelError("", "Неверный логин или пароль.");
-                 }
-                 else
-                 {
-                    // string role = claim.RoleClaimType;
-
-                     AuthenticationManager.SignOut();
-                     AuthenticationManager.SignIn(new AuthenticationProperties
-                     {
-                         IsPersistent = true
-                     }, claim);
-                     //HttpContext.User.IsInRole("admin")
-                     string role = UserService.GetRole(model.Email);
-
-                     switch (role)
-                     {
-                         case "admin":
-                             {
-                                 return RedirectToAction("GetListOfDoctors");
-                             }
-                         case "doctor":
-                             {
-                                 return RedirectToAction("GetListOfPatients");
-                             }
-                         case "patient":
-                             {
-                                 return RedirectToAction("GetListOfMedicaments");
-                             }
-                         default:
-                             {
-                                 return RedirectToAction("Login");
-                             }
-                     }
-                 }
-             }
-             return View(model);
-         }
-         */
         public ActionResult Logout()
         {
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }
 
-       
+        [Authorize(Roles = "admin")]
         public ActionResult GetListOfDoctors()
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
             var doctors = mapper.Map<IEnumerable<DoctorDTO>, List<DoctorView>>(UserService.GetAll());
-            ModelState.AddModelError("field", "error");
             return View(doctors);
         }
-        
+
+        [Authorize(Roles = "admin, doctor")]
         public ActionResult GetListOfPatients(string doctorId)
         {
             if (doctorId == null)
@@ -164,233 +108,124 @@ namespace Medicine.WEB.Controllers
                 var doctorEmail = HttpContext.User.Identity.Name;
                 doctorId = UserService.GetId(doctorEmail);
             }
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientDTO, PatientView>()).CreateMapper();
             var patients = mapper.Map<IEnumerable<PatientDTO>, List<PatientView>>(UserService.GetAll(doctorId));
             ViewBag.doctorId = doctorId;
             return View(patients);
         }
+        [Authorize(Roles = "admin")]
         public ActionResult RegisterDoctor()
         {
-            return View(new DoctorView() { Surname = "Smith", Name = "Ann", Email = "asdfg@gmail.com", Password = "qwerty654321", Qualification = "low",DateOfBirth="2000-09-28" });
+            return View(new DoctorView() { Surname = "Smith", Name = "Ann", Email = "asdfg@gmail.com", Password = "qwerty654321", Qualification = "low", DateOfBirth = "2000-09-28" });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult RegisterDoctor(DoctorView model)
         {
-          //  await SetInitialDataAsync();          
             if (ModelState.IsValid)
             {
-                DoctorDTO doctorDTO = new DoctorDTO
+                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorView, DoctorDTO>()).CreateMapper();
+                var doctorDTO = mapper.Map<DoctorView, DoctorDTO>(model);
+                doctorDTO.Role = "doctor";
+                OperationDetails operationDetails = UserService.Create(doctorDTO);
+                if (operationDetails.Succedeed)
                 {
-                    Email = model.Email,
-                    Password = model.Password,
-                    Name = model.Name,
-                    Surname = model.Surname,
-                    Role = "doctor",
-                    Qualification = model.Qualification,
-                    DateOfBirth = model.DateOfBirth
+                    return RedirectToAction("GetListOfDoctors");
+                }
 
-                
-                };
-                // OperationDetails operationDetails = await UserService.CreateDoctorA(doctorDTO);
-                //  UserService.CreateAsync(doctorDTO).GetAwaiter();///////////////////////////////////!!!!
-
-                UserService.Create(doctorDTO);
-                /*  if (operationDetails.Succedeed)
-                      return View("SuccessRegister");
-                  else
-                      ModelState.AddModelError(operationDetails.Property, operationDetails.Message);*/
-
-                return RedirectToAction("GetListOfDoctors");
+                else
+                    ViewBag.Message = "Already exist!";
             }
             return View(model);
         }
+        [Authorize(Roles = "admin")]
         public ActionResult UpdateDoctor(string id)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
             var doctor = mapper.Map<DoctorDTO, DoctorView>(UserService.GetDoctor(id));
+            doctor.Password = "qwerty654321";
             return View(doctor);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult UpdateDoctor(DoctorView model)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap< DoctorView,DoctorDTO>()).CreateMapper();
-            var doctor = mapper.Map< DoctorView,DoctorDTO>(model);
-            UserService.Update(doctor);
-            return RedirectToAction("GetListOfDoctors");
-        }
-
-        public ActionResult DeleteDoctorView(string id)
-        {
-            ViewBag.id = id;
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO,DoctorView >()).CreateMapper();
-            var item = mapper.Map<IEnumerable< DoctorDTO>,IEnumerable <DoctorView>>(UserService.GetAll().Where(x=>x.Id!=id));
-            return View(item);
-        }
-       
-        public ActionResult DeleteDoctor(string id,string newId)
-        {
-            UserService.Delete(id,newId);
-            return RedirectToAction("GetListOfDoctors");
-        }
-        public ActionResult CreatePatient(string doctorId)
-        {
-            return View(new PatientView() {DoctorId=doctorId ?? UserService.GetId(HttpContext.User.Identity.Name), Surname = "Smith", Name = "Ann", Email = "asdfgp@gmail.com", Password = "qwerty654321", historyOfTreatment="some diagnosis",DateOfBirth="01.02.1998"});
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreatePatient(PatientView model)
-        {
-           // string doctorId = UserService.GetDoctorId(HttpContext.User.Identity.Name);
             if (ModelState.IsValid)
             {
-                var patientDTO = new PatientDTO
-                {
-                    Email = model.Email,
-                    Password = model.Password,
-                    Name = model.Name,
-                    Surname = model.Surname,
-                    Role = "patient",
-                    DoctorId = model.DoctorId,
-                   historyOfTreatment=model.historyOfTreatment,
-                  DateOfBirth=model.DateOfBirth
-                   
-                };
-                
-                // UserService.CreateAsync(patientDTO).GetAwaiter();
-                UserService.Create(patientDTO);
-                return RedirectToAction($"GetListOfPatients",new { doctorId = patientDTO.DoctorId });
+                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorView, DoctorDTO>()).CreateMapper();
+                var doctor = mapper.Map<DoctorView, DoctorDTO>(model);
+                UserService.Update(doctor);
+                return RedirectToAction("GetListOfDoctors");
             }
             return View(model);
         }
 
+        [Authorize(Roles = "admin")]
+        public ActionResult DeleteDoctorView(string id)
+        {
+            ViewBag.id = id;
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DoctorDTO, DoctorView>()).CreateMapper();
+            var item = mapper.Map<IEnumerable<DoctorDTO>, IEnumerable<DoctorView>>(UserService.GetAll().Where(x => x.Id != id));
+            return View(item);
+        }
+
+        [Authorize(Roles = "admin")]
+        public ActionResult DeleteDoctor(string id, string newId)
+        {
+            UserService.Delete(id, newId);
+            return RedirectToAction("GetListOfDoctors");
+        }
+
+        [Authorize(Roles = "admin, doctor")]
+        public ActionResult CreatePatient(string doctorId)
+        {
+            return View(new PatientView() { DoctorId = doctorId ?? UserService.GetId(HttpContext.User.Identity.Name), Surname = "Smith", Name = "Ann", Email = "asdfgp@gmail.com", Password = "qwerty654321", historyOfTreatment = "some diagnosis", DateOfBirth = "1998-10-20" });
+        }
+
+        [HttpPost]
+        public ActionResult CreatePatient(PatientView model)
+        {
+            if (ModelState.IsValid)
+            {
+                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientView, PatientDTO>()).CreateMapper();
+                var patientDTO = mapper.Map<PatientView, PatientDTO>(model);
+                patientDTO.Role = "patient";
+                OperationDetails operationDetails = UserService.Create(patientDTO);
+                if (operationDetails.Succedeed)
+                    return RedirectToAction($"GetListOfPatients", new { doctorId = patientDTO.DoctorId });
+                else ViewBag.Message = "Already exist";
+            }
+            return View(model);
+        }
+
+        [Authorize(Roles = "admin, doctor")]
         public ActionResult UpdatePatient(string id)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientDTO, PatientView>()).CreateMapper();
             var patient = mapper.Map<PatientDTO, PatientView>(UserService.GetPatient(id));
+            patient.Password = "qwerty654321";
             return View(patient);
         }
-      /*  public ActionResult MovePatientView(string id)
-        {
-            ViewBag.id = id;
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientDTO, PatientView>()).CreateMapper();
-            var item = mapper.Map<IEnumerable<PatientDTO>, IEnumerable<PatientView>>(UserService.GetAll(id).Where(x => x.Id != id));
-            return View(item);
-        }*/
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult UpdatePatient(PatientView model)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientView, PatientDTO>()).CreateMapper();
-            var patient = mapper.Map<PatientView, PatientDTO>(model);
-            UserService.Update(patient);
-            return RedirectToAction($"GetListOfPatients",new { doctorId = model.DoctorId });
+            if (ModelState.IsValid)
+            {
+                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<PatientView, PatientDTO>()).CreateMapper();
+                var patient = mapper.Map<PatientView, PatientDTO>(model);
+                UserService.Update(patient);
+                return RedirectToAction($"GetListOfPatients", new { doctorId = model.DoctorId });
+            }
+            return View(model.Id);
         }
 
+        [Authorize(Roles = "admin, doctor")]
         public ActionResult DeletePatient(string id)
         {
-           string doctorid= UserService.GetPatient(id).DoctorId;
+            string doctorid = UserService.GetPatient(id).DoctorId;
             UserService.Delete(id);
             return RedirectToAction($"GetListOfPatients", new { doctorId = doctorid });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       /*private async Task SetInitialDataAsync()
-        {
-            await UserService.SetInitialData(new UserDTO
-            {
-                Email = "somemail@mail.ru",
-                UserName = "somemail@mail.ru",
-                Password = "ad46D_ewr3",
-                Name = "Семен Семенович Горбунков",
-                Role = "admin",
-            }, new List<string> { "user", "admin","doctor","patient" });
-
-        }*/
     }
 }
-/*
- *        private void SetInitialData()
-{
-    UserService.SetInitialData(new UserDTO
-    {
-        Email = "a@mail.ru",
-        UserName = "a@mail.ru",
-        Password = "1",
-        Name = "Jek",
-        Role = "admin",
-    }, new List<string> { "user", "admin", "doctor", "patient" });
-}
- * public ActionResult Login(LoginModel model)
-  {
-      // SetInitialData();
-      if (ModelState.IsValid)
-      {
-          UserDTO userDto = new UserDTO { Email = model.Email, Password = model.Password };
-          ClaimsIdentity claim =  UserService.Authenticate(userDto);
-          if (claim == null)
-          {
-              ModelState.AddModelError("", "Неверный логин или пароль.");
-          }
-          else
-          {
-              AuthenticationManager.SignOut();
-              AuthenticationManager.SignIn(new AuthenticationProperties
-              {
-                  IsPersistent = true
-              }, claim);
-              return RedirectToAction("Index", "Home");
-          }
-      }
-      return View(model);
-  }
 
-public ActionResult Logout()
-{
-    AuthenticationManager.SignOut();
-    return RedirectToAction("Index", "Home");
-}
-
-public ActionResult Register()
-{
-    return View();
-}
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult Register(RegisterModel model)
-{
-   // SetInitialData();
-    if (ModelState.IsValid)
-    {
-        UserDTO userDto = new UserDTO
-        {
-            Email = model.Email,
-            Password = model.Password,
-            Name = model.Name,
-            Role = "user"
-        };
-        OperationDetails operationDetails = UserService.Create(userDto);
-        if (operationDetails.Succedeed)
-            return View("SuccessRegister");
-        else
-            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-    }
-    return View(model);
-}
-
-}
-}*/

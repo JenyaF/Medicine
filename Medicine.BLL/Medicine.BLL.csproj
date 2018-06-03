@@ -96,15 +96,10 @@
     <Compile Include="DTO\PatientDTO.cs" />
     <Compile Include="DTO\RecipeDTO.cs" />
     <Compile Include="Infrastructure\OperationDetails.cs" />
-    <Compile Include="Interfaces\IDoctorService.cs" />
-    <Compile Include="Interfaces\ICommonService.cs" />
     <Compile Include="Interfaces\IMedicametService.cs" />
     <Compile Include="Interfaces\IRecipeService.cs" />
     <Compile Include="Interfaces\IServiceCreator.cs" />
-    <Compile Include="Interfaces\IPatientService.cs" />
-    <Compile Include="Servises\DoctorService.cs" />
     <Compile Include="Servises\MedicamentService.cs" />
-    <Compile Include="Servises\PatientService.cs" />
     <Compile Include="Servises\RecipeService.cs" />
     <Compile Include="Servises\ServiceCreator.cs" />
     <Compile Include="Util\NinjectRegistrations.cs" />

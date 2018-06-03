@@ -18,18 +18,18 @@ namespace Medicine.WEB.Controllers
     {
         public IMedicametService MedicametService { get; set; }
         public MedicamentController()
-        {
+        {   }
 
-        }
         public MedicamentController(IMedicametService service)
         {
             MedicametService = service;
         }
-        // GET: Medicament
+
         public ActionResult Index()
         {
             return RedirectToAction("GetListOfMedicaments");
         }
+        [Authorize(Roles = "admin")]
         public ActionResult GetListOfMedicaments()
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<MedicamentDTO, MedicamentView>()).CreateMapper();
@@ -37,18 +37,23 @@ namespace Medicine.WEB.Controllers
             return View(items);
         }
 
+        [Authorize(Roles = "admin")]
         public ActionResult Update(int id)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<MedicamentDTO, MedicamentView>()).CreateMapper();
             var item = mapper.Map<MedicamentDTO, MedicamentView>(MedicametService.Find(id));
             return View(item);
         }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Update(MedicamentView model)
         {
-            MedicametService.Update(new MedicamentDTO() { Id = model.Id, Name = model.Name });
-            return RedirectToAction("GetListOfMedicaments");
+            if (ModelState.IsValid)
+            {
+                MedicametService.Update(new MedicamentDTO() { Id = model.Id, Name = model.Name });
+                return RedirectToAction("GetListOfMedicaments");
+            }
+            return View(model);
         }
 
         public ActionResult Delete(int id)
@@ -56,16 +61,22 @@ namespace Medicine.WEB.Controllers
             MedicametService.Delete(id);
             return RedirectToAction("GetListOfMedicaments");
         }
+
+        [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
             return View(new MedicamentView() { Name="med1" });
         }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create(MedicamentView model)
         {
-          MedicametService.Create(new MedicamentDTO() { Name = model.Name });
-          return RedirectToAction("GetListOfmedicaments");
+            if (ModelState.IsValid)
+            {
+                MedicametService.Create(new MedicamentDTO() { Name = model.Name });
+                return RedirectToAction("GetListOfmedicaments");
+            }
+            return Create(model);
         }
     }
 }

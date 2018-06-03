@@ -7,7 +7,10 @@
 <h2>GetListOfRecipes</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @if (!HttpContext.Current.User.IsInRole("patient"))
+    {
+        @Html.ActionLink("Create New", "Create")
+    }
 
 </p>
 <table class="table">
@@ -47,11 +50,15 @@
         <td>
             @Html.DisplayFor(modelItem => item.FinishDate)
         </td>
+        @if (!HttpContext.Current.User.IsInRole("patient"))
+        {
         <td>
+
             @Html.ActionLink("Edit", "Update", new { id = item.Id }) |
 
             @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
+        }
     </tr>
 }
 

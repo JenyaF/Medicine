@@ -176,7 +176,6 @@
     <Compile Include="Models\MedicamentView.cs" />
     <Compile Include="Models\PatientView.cs" />
     <Compile Include="Models\RecipeView.cs" />
-    <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

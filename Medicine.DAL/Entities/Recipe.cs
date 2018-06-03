@@ -14,14 +14,10 @@ namespace Medicine.DAL.Entities
         public int MedicamentId { get; set; }
         public virtual Medicament Medicament { get; set; }
         public string PatientId { get; set; }
-        public virtual Patient Patient { get; set; }
-        [Range(0.1, 1000)]
+        public virtual Patient Patient { get; set; }      
         public double Volume { get; set; }
-        [Range(1, 10)]
         public int AmountPerDay { get; set; }
-        [DataType(DataType.Date)]
         public string StartDate { get; set; }
-        [DataType(DataType.Date)]
         public string FinishDate { get; set; }
     }
 }
