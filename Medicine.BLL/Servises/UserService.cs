@@ -40,12 +40,12 @@ namespace Medicine.BLL.Services
         private OperationDetails Create(UserDTO userDto)
         {
 
-            ApplicationUser user = FindByEmail(userDto.Email);// Database.UserManager.FindByEmail(userDto.Email);
+            ApplicationUser user = FindByEmail(userDto.Email);
             if (user == null)
             {
                 user = new ApplicationUser { Email = userDto.Email, UserName = userDto.Email };
-                CreateUser(user, userDto.Password);// Database.UserManager.Create(user, userDto.Password);
-                AddToRole(user.Id, userDto.Role); // Database.UserManager.AddToRole(user.Id, userDto.Role);
+                CreateUser(user, userDto.Password);
+                AddToRole(user.Id, userDto.Role); 
                 ClientProfile clientProfile = new ClientProfile { Id = user.Id, Name = userDto.Name, DateOfBirth = userDto.DateOfBirth, Surname = userDto.Surname, Role = userDto.Role };
                 Database.ClientManager.Create(clientProfile);
                 Database.Save();
@@ -61,9 +61,9 @@ namespace Medicine.BLL.Services
         public ClaimsIdentity Authenticate(UserDTO userDto)
         {
             ClaimsIdentity claim = null;
-            ApplicationUser user = Find(userDto.Email, userDto.Password);//Database.UserManager.Find(userDto.Email, userDto.Password);
+            ApplicationUser user = Find(userDto.Email, userDto.Password);
             if (user != null)
-                claim = CreateIdentify(user, DefaultAuthenticationTypes.ApplicationCookie);//Database.UserManager.CreateIdentity(user,  DefaultAuthenticationTypes.ApplicationCookie);                                         
+                claim = CreateIdentify(user, DefaultAuthenticationTypes.ApplicationCookie);
             return claim;
         }
 
@@ -78,11 +78,6 @@ namespace Medicine.BLL.Services
                     Database.RoleManager.Create(role);
                 }
             }
-            // await Create(adminDto);
-        }
-        public void Dispose()
-        {
-            Database.Dispose();
         }
 
         public string GetRole(string email)
@@ -97,7 +92,7 @@ namespace Medicine.BLL.Services
 
         public OperationDetails Create(DoctorDTO doctorDTO)
         {
-            OperationDetails operationDetails = Create((UserDTO)doctorDTO);//.Result  createAsync
+            OperationDetails operationDetails = Create((UserDTO)doctorDTO);
             if (operationDetails.Succedeed)
             {
                 Database.Doctors.Create(new Doctor() { Id = doctorDTO.Id, Qualification = doctorDTO.Qualification });
@@ -112,10 +107,11 @@ namespace Medicine.BLL.Services
             Database.Doctors.Update(new Doctor() { Id = doctorDTO.Id, Qualification = doctorDTO.Qualification });
             Database.Save();
         }
+
         //id-removed doctor id,doctorid-doctor id for replase
-        public void Delete(string id, string doctorId)
+        public void Delete(string RemovedDoctorId, string replasingDoctorId)
         {
-            Database.Doctors.Delete(id, doctorId);
+            Database.Doctors.Delete(RemovedDoctorId, replasingDoctorId);
             Database.Save();
         }
 
@@ -160,11 +156,13 @@ namespace Medicine.BLL.Services
                        y => y.Id,
                        (x, y) => new PatientDTO() { Id = x.Id, Name = y.Name, Surname = y.Surname, Email = x.ClientProfile.ApplicationUser.Email, historyOfTreatment = x.historyOfTreatment, DoctorId = x.DoctorId,DateOfBirth=x.ClientProfile.DateOfBirth,Role="patient",UserName=y.ApplicationUser.UserName }).ToList();
         }
+
         public DoctorDTO GetDoctor(string id)
         {
             Doctor doctor = Database.Doctors.Get(id);
             return new DoctorDTO() {Id = doctor.Id, Email = doctor.ClientProfile.ApplicationUser.Email, Name = doctor.ClientProfile.Name, Surname = doctor.ClientProfile.Surname, Qualification = doctor.Qualification, Role = "doctor", UserName = doctor.ClientProfile.ApplicationUser.UserName,DateOfBirth=doctor.ClientProfile.DateOfBirth };
         }
+
         public PatientDTO GetPatient(string id)
         {
             Patient patient = Database.Patients.Get(id);
@@ -172,80 +170,10 @@ namespace Medicine.BLL.Services
 
         }
         
-
-
-
-
-        
-        /*     public async Task<OperationDetails> CreateAsync(DoctorDTO doctorDTO)
-             {
-                 OperationDetails operationDetails = CreateAsync((UserDTO)doctorDTO).Result;
-                 if (operationDetails.Succedeed)
-                 {
-                     Database.Doctors.Create(new Doctor() { Id = doctorDTO.Id, Qualification = doctorDTO.Qualification });
-                     await Database.SaveAsync();
-                 }
-                 return operationDetails;
-             }
-         */
-         /* public async Task<OperationDetails> CreateDoctorAsync(DoctorDTO doctorDTO)
-         {
-             OperationDetails operationDetails = await this.CreateAsync(doctorDTO);
-             Database.Doctors.Create(new Doctor() { Id = doctorDTO.Id, Qualification = doctorDTO.Qualification });
-             await Database.SaveAsync();
-             return operationDetails;
-         }*/
-        /*  public async Task<OperationDetails> CreateAsync(UserDTO userDto)
-          {
-              ApplicationUser user = await Database.UserManager.FindByEmailAsync(userDto.Email);
-              if (user == null)
-              {
-                  user = new ApplicationUser { Email = userDto.Email, UserName = userDto.Email };
-                  await Database.UserManager.CreateAsync(user, userDto.Password);
-                  // добавляем роль
-                  await Database.UserManager.AddToRoleAsync(user.Id, userDto.Role);
-
-                  // создаем профиль клиента
-                  ClientProfile clientProfile = new ClientProfile { Id = user.Id, Name = userDto.Name,DateOfBirth=userDto.DateOfBirth,Surname=userDto.Surname,Role=userDto.Role };
-                  Database.ClientManager.Create(clientProfile);
-                  await Database.SaveAsync();
-                  return new OperationDetails(true, "Регистрация успешно пройдена", "");
-
-              }
-              else
-              {
-                  return new OperationDetails(false, "Пользователь с таким логином уже существует", "Email");
-              }
-          }
-
-         public async Task<ClaimsIdentity> AuthenticateAsync(UserDTO userDto)
-         {
-             ClaimsIdentity claim = null;
-             // находим пользователя
-             ApplicationUser user = await Database.UserManager.FindAsync(userDto.Email, userDto.Password);
-             // авторизуем его и возвращаем объект ClaimsIdentity
-             if (user != null)
-                 claim = await Database.UserManager.CreateIdentityAsync(user,
-                                             DefaultAuthenticationTypes.ApplicationCookie);
-             return claim;
-         }
-  */
-        /*
-        // начальная инициализация бд
-        public async Task SetInitialData(UserDTO adminDto, List<string> roles)
-        {            
-            foreach (string roleName in roles)
-            {
-                var role = await Database.RoleManager.FindByNameAsync(roleName);
-                if (role == null)
-                {
-                    role = new ApplicationRole { Name = roleName };
-                    await Database.RoleManager.CreateAsync(role);
-                }
-            }
-           // await Create(adminDto);
-        }
-        */
-
+        public void Dispose()
+        {
+            Database.Dispose();
+        }       
+      
     }
 }

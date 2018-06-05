@@ -16,14 +16,17 @@ namespace Medicine.DAL.Repositories
         {
             this.db = context;
         }
+
         public void Create(Medicament medicament)
         {
             db.Medicaments.Add(medicament);
         }
+
         public IEnumerable<Medicament> GetAll()
         {
             return db.Medicaments.ToList();
         }
+
         public void Delete(int id)
         {
             var item = db.Medicaments.Find(id);
@@ -32,12 +35,14 @@ namespace Medicine.DAL.Repositories
                 db.Medicaments.Remove(item);
             }
         }
+
         public void Update(Medicament item)
         {
            var newItem= db.Medicaments.Find(item.Id);
             newItem.Name = item.Name;
             db.Entry(newItem).State = EntityState.Modified;
         }
+
         public Medicament Find(int id)
         {
           return db.Medicaments.Find(id);

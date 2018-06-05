@@ -16,25 +16,13 @@ namespace Medicine.WEB.Controllers
     public class HomeController : Controller
     {
 
-        private IUserService UserService
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().GetUserManager<IUserService>();
-            }
-        }
+        private IUserService UserService { get => HttpContext.GetOwinContext().GetUserManager<IUserService>(); }
+        private IAuthenticationManager AuthenticationManager { get => HttpContext.GetOwinContext().Authentication; }
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
         public ActionResult Index()
         {
 
-            UserService.SetInitialData(new List<string>());
+            UserService.SetInitialData(new List<string>() { "admin", "doctor", "patient" });
             return RedirectToAction("Login");
         }
 
@@ -42,7 +30,7 @@ namespace Medicine.WEB.Controllers
         {
             return View(new LoginModel() { Email = "email@ukr.net", Password = "qwerty654321" });
         }
-        [ValidateAntiForgeryToken]
+
         [HttpPost]
         public ActionResult Login(LoginModel model)
         {
@@ -138,6 +126,7 @@ namespace Medicine.WEB.Controllers
             }
             return View(model);
         }
+
         [Authorize(Roles = "admin")]
         public ActionResult UpdateDoctor(string id)
         {

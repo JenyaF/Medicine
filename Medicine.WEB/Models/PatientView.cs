@@ -21,6 +21,7 @@ namespace Medicine.WEB.Models
         [Required]
         public string Surname { get; set; }
         [Required]
+        [Display(Name="History of treatment")]
         public string historyOfTreatment { get; set; }
         [Required]
         public string DoctorId { get; set; }

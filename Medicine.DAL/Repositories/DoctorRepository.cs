@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Medicine.DAL.Interfaces;
 using Medicine.DAL.Entities;
 using Medicine.DAL.EF;
@@ -29,10 +26,10 @@ namespace Medicine.DAL.Repositories
             return db.Doctors.ToList();
         }
 
-        public void Delete(string id,string doctorId)
+        public void Delete(string removedDoctorId,string replasingDoctorId)
         {
-            var newDoctor= db.Doctors.Find(doctorId);
-            var item = db.Doctors.Find(id);
+            var newDoctor= db.Doctors.Find(replasingDoctorId);
+            var item = db.Doctors.Find( removedDoctorId);
             if (item != null&&newDoctor!=null)
             {
                 if (item.Patients.Count != 0)
@@ -48,6 +45,7 @@ namespace Medicine.DAL.Repositories
             db.Entry(item).State = EntityState.Modified;
             db.SaveChanges();
         }
+
         public Doctor Get(string id)
         {
           return  db.Doctors.Find(id);

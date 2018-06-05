@@ -4,10 +4,10 @@
     ViewBag.Title = "GetListOfPatients";
 }
 
-<h2>GetListOfPatients</h2>
+<h2>List of parients</h2>
 
 <p>
-    @Html.ActionLink("Create New", "CreatePatient",new { doctorId = ViewBag.doctorId})
+    @Html.ActionLink("Create New", "CreatePatient", new { doctorId = ViewBag.doctorId })
 </p>
 <table class="table">
     <tr>
@@ -26,27 +26,31 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>      
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Surname)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.historyOfTreatment)
-        </td>
-       
-        <td>
-            @Html.ActionLink("Edit", "UpdatePatient", new { id = item.Id }) |
-            @Html.RouteLink("List of recipes", new { controller = "Recipe", action = "GetListOfRecipes",  id = item.Id }) |
-            @Html.ActionLink("Delete", "DeletePatient", new { id = item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Surname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.historyOfTreatment)
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "UpdatePatient", new { id = item.Id }) |
+                @Html.RouteLink("List of recipes", new { controller = "Recipe", action = "GetListOfRecipes", id = item.Id }) |
+                @Html.ActionLink("Delete", "DeletePatient", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
+<div>
+    @Html.ActionLink("Home", "Login", "Home")
+</div>

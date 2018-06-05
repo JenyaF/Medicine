@@ -4,10 +4,6 @@ using Owin;
 using Medicine.BLL.Services;
 using Microsoft.AspNet.Identity;
 using Medicine.BLL.Interfaces;
-using Ninject;
-using Ninject.Modules;
-using Ninject.Web.Mvc;
-using Medicine.BLL.Util;
 
 [assembly: OwinStartup(typeof(Medicine.WEB.App_Start.Startup))]
 namespace Medicine.WEB.App_Start
@@ -26,10 +22,7 @@ namespace Medicine.WEB.App_Start
 
         }
 
-         private IUserService CreateUserService()
-         {
+         private IUserService CreateUserService() => serviceCreator.CreateUserService("DefaultContext");
 
-            return serviceCreator.CreateUserService("DefaultContext");
-        }
     }
 }

@@ -1,17 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.Owin.Security;
-using Microsoft.AspNet.Identity.Owin;
-using System.Threading.Tasks;
 using Medicine.WEB.Models;
 using Medicine.BLL.DTO;
-using System.Security.Claims;
 using Medicine.BLL.Interfaces;
-using Medicine.BLL.Infrastructure;
 using AutoMapper;
-using System.Linq;
-using System;
+
 namespace Medicine.WEB.Controllers
 {
     public class RecipeController : Controller

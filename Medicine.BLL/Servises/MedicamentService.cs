@@ -24,8 +24,11 @@ namespace Medicine.BLL.Services
         }
         public void Create(MedicamentDTO item)
         {
-            Database.Medicaments.Create(new Medicament() { Id = item.Id, Name = item.Name });
-            Database.Save();
+            if (Database.Medicaments.Find(item.Name) == null)
+            {
+                Database.Medicaments.Create(new Medicament() { Id = item.Id, Name = item.Name });
+                Database.Save();
+            }
         }
         public void Update(MedicamentDTO item)
         {

@@ -12,18 +12,22 @@ namespace Medicine.DAL.Repositories
     public class RecipeRepository:IRecipeManeger
     {
         private ApplicationContext db;
+
         public RecipeRepository (ApplicationContext context)
         {
             this.db = context;
         }
+
         public void Create(Recipe recipe)
         {
             db.Recipes.Add(recipe);
         }
+
         public IEnumerable<Recipe> GetAll(string patientId)
         {
             return db.Recipes.Where(x=>x.PatientId==patientId).ToList();
         }
+
         public void Delete(int id)
         {
             var item = db.Recipes.Find(id);
@@ -31,9 +35,9 @@ namespace Medicine.DAL.Repositories
             {
                 db.Recipes.Remove(item);
                 db.SaveChanges();
-            }
-            
+            }          
         }
+
         public void Update(Recipe item)
         {
             var newItem= db.Recipes.Find(item.Id);
@@ -45,10 +49,12 @@ namespace Medicine.DAL.Repositories
             db.Entry(newItem).State = EntityState.Modified;
             db.SaveChanges();
         }
+
         public Recipe Find(int id)
         {
             return db.Recipes.Find(id);
         }
+
        public Recipe Find( string nameOfMedicament, string patientId)
         {
             return db.Recipes.Where(x => x.PatientId == patientId && x.Medicament.Name == nameOfMedicament).FirstOrDefault();

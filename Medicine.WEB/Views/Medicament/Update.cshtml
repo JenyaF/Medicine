@@ -9,9 +9,9 @@
 @using (Html.BeginForm("Update", "Medicament", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>MedicamentView</h4>
+
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
@@ -33,5 +33,9 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "GetlistOfmedicaments","medicament")
+    @Html.ActionLink("Back to List", "GetlistOfmedicaments", "medicament")
+</div>
+
+<div>
+    @Html.ActionLink("Home", "Login", "Home")
 </div>

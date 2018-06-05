@@ -8,6 +8,7 @@ using Medicine.DAL.Interfaces;
 using Medicine.BLL.DTO;
 using Medicine.DAL.Entities;
 using AutoMapper;
+
 namespace Medicine.BLL.Services
 {
     public class RecipeService:IRecipeService
@@ -22,6 +23,7 @@ namespace Medicine.BLL.Services
         {
             return Database.Recipes.GetAll(patientId).Select(x=>new RecipeDTO() { AmountPerDay = x.AmountPerDay, Id = x.Id, MedicamentId = x.MedicamentId, PatientId = x.PatientId, Volume = x.Volume,FinishDate=x.FinishDate,StartDate=x.StartDate ,MedicamentName=x.Medicament.Name});
         }
+
        public  void Create(RecipeDTO item)
         {
              Medicament medicament= Database.Medicaments.Find(item.MedicamentName);

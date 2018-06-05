@@ -4,9 +4,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Medicine.DAL.Identity
 {
-    public class ApplicationRoleManager : RoleManager<ApplicationRole>//,int>
+    public class ApplicationRoleManager : RoleManager<ApplicationRole>
     {
-        public ApplicationRoleManager(RoleStore<ApplicationRole/*,int,IdentityUserRole<int>*/> store):
+        public ApplicationRoleManager(RoleStore<ApplicationRole> store):
             base(store)                   
         { }
     }

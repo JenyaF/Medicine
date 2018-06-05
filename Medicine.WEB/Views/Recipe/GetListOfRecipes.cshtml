@@ -4,7 +4,7 @@
     ViewBag.Title = "GetListOfRecipes";
 }
 
-<h2>GetListOfRecipes</h2>
+<h2>List of recipes</h2>
 
 <p>
     @if (!HttpContext.Current.User.IsInRole("patient"))
@@ -33,33 +33,38 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(model => item.MedicamentName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Volume)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AmountPerDay)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FinishDate)
-        </td>
-        @if (!HttpContext.Current.User.IsInRole("patient"))
-        {
-        <td>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.MedicamentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Volume)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AmountPerDay)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinishDate)
+            </td>
+            @if (!HttpContext.Current.User.IsInRole("patient"))
+            {
+                <td>
 
-            @Html.ActionLink("Edit", "Update", new { id = item.Id }) |
+                    @Html.ActionLink("Edit", "Update", new { id = item.Id }) |
 
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-        </td>
-        }
-    </tr>
-}
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            }
+        </tr>
+    }
 
 </table>
+
+<div>
+    @Html.ActionLink("Home", "Login", "Home")
+</div>

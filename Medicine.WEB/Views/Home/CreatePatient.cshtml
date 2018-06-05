@@ -7,14 +7,14 @@
     @ViewBag.Message
 </p>
 
-<h2>CreatePatient</h2>
+<h2>Create patient</h2>
 
 @using (Html.BeginForm("CreatePatient", "Home", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.DoctorId)
     <div class="form-horizontal">
-        <h4>PatientView</h4>
+
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -74,5 +74,8 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "GetListOfPatients",new { doctorId = Model.DoctorId })
+</div>
+<div>
+    @Html.ActionLink("Home", "Login", "Home")
 </div>

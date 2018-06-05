@@ -4,7 +4,7 @@
     ViewBag.Title = "GetListOfDoctors";
 }
 
-<h2>GetListOfDoctors</h2>
+<h2>Get list of doctors</h2>
 
 <p>
     @Html.ActionLink("List of medicaments", "GetListOfMedicaments", "Medicament")
@@ -32,29 +32,32 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Surname)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Qualification)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfBirth)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "UpdateDoctor", new { id = item.Id }) |
-            @Html.ActionLink("Get list of patients", "GetListOfPatients", new { doctorId = item.Id }) |
-            @Html.ActionLink("Delete", "DeleteDoctorView", new { id = item.Id })
-        </td>
-    </tr>
-}
-
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Surname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Qualification)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "UpdateDoctor", new { id = item.Id }) |
+                @Html.ActionLink("Get list of patients", "GetListOfPatients", new { doctorId = item.Id }) |
+                @Html.ActionLink("Delete", "DeleteDoctorView", new { id = item.Id })
+            </td>
+        </tr>
+    }
 </table>
+<div>
+    @Html.ActionLink("Home", "Login", "Home")
+</div>
