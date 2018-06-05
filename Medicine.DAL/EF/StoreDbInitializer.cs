@@ -14,7 +14,6 @@ namespace Medicine.DAL.EF
     {
         ApplicationRoleManager roleManager;
         ApplicationUserManager userManager;
-      //  ClientManager clientManager;
         ApplicationContext db;
         protected override void Seed(ApplicationContext db)
         {
@@ -41,46 +40,9 @@ namespace Medicine.DAL.EF
             for ( int i = 1; i < 5; i++)
             {
                 AddDoctor(i);
-            }
-            /*  
-                 db.ClientProfiles.AddRange(new List<ClientProfile>(){new ClientProfile() { Name = "Jon",Surname="Swith",DateOfBirth="01.02.1998",ApplicationUser=new ApplicationUser(){Email="ssa@ukr.net" } },
-                                                                      new ClientProfile() { Name = "Jey",Surname="Swith",DateOfBirth="07.07.1990",ApplicationUser=new ApplicationUser(){Email="sa@ukr.net" } },
-                                                                      new ClientProfile() { Name = "Jim",Surname="Broun",DateOfBirth="09.02.1978",ApplicationUser=new ApplicationUser(){Email="ssag@ukr.net" } },
-                                                                      new ClientProfile() { Name = "Bill",Surname="Broun",DateOfBirth="09.02.1978",ApplicationUser=new ApplicationUser(){Email="ssag1@ukr.net" } },
-                                                                      new ClientProfile() { Name = "Li",Surname="Broun",DateOfBirth="09.02.1978",ApplicationUser=new ApplicationUser(){Email="ssag2@ukr.net" } },
-                                                                      new ClientProfile() { Name = "Jek",Surname="Broun",DateOfBirth="09.02.1978",ApplicationUser=new ApplicationUser(){Email="ssag3@ukr.net" } }
-                 });
-                 db.Doctors.AddRange(new List<Doctor>() { new Doctor() { Id=1,Qualification="Higth"},
-                                                          new Doctor() { Id=2,Qualification="Low"}
-                 });
-                 db.Patients.AddRange(new List<Patient>() { new Patient() { Id = "3", DoctorId = "1",historyOfTreatment="Bad diagnosis" },
-                                                            new Patient() { Id = "4", DoctorId = 1, historyOfTreatment="Bad diagnosis" },
-                                                            new Patient() { Id = 5, DoctorId = 1, historyOfTreatment="Alive" },
-                                                            new Patient() { Id = 6, DoctorId = 2, historyOfTreatment="Bad diagnosis" },
-
-                 });
-                 db.Patients.AddRange(new List<Patient>() { new Patient() { Id = 3, DoctorId = 1,historyOfTreatment="Bad diagnosis" },
-                                                            new Patient() { Id = 4, DoctorId = 1, historyOfTreatment="Bad diagnosis" },
-                                                            new Patient() { Id = 5, DoctorId = 1, historyOfTreatment="Alive" },
-                                                            new Patient() { Id = 6, DoctorId = 2, historyOfTreatment="Bad diagnosis" },
-
-                 });
-
-                 db.Recipes.AddRange(new List<Recipe>() { new Recipe() { Id = 3, AmountPerDay = 2, MedicamentId = 1, Volume = 1 },
-                                                          new Recipe() { Id = 3, AmountPerDay = 5, MedicamentId = 2, Volume = 1 },
-                                                          new Recipe() { Id = 3, AmountPerDay = 3, MedicamentId = 3, Volume = 1 },
-                                                          new Recipe() { Id = 3, AmountPerDay = 2, MedicamentId = 4, Volume = 2 },
-                                                          new Recipe() { Id = 3, AmountPerDay = 1, MedicamentId = 5, Volume = 1 },
-                 });
-
-              db.Medicaments.AddRange(new List<Medicament>(){ new Medicament() { Name="med1"},
-                                                                 new Medicament() { Name="med2"},
-                                                                 new Medicament() { Name="med3"},
-                                                                 new Medicament() { Name="med4"},
-                                                                 new Medicament() { Name="med5"}
-                 });
-              db.SaveChanges();*/
+            }           
         }
+
         void AddDoctor(int i)
         {           
             var user = new ApplicationUser { Email = $"email{i}@ukr.net", UserName = $"email{i}@ukr.net" };
@@ -120,8 +82,7 @@ namespace Medicine.DAL.EF
         void AddRecipes(string patientid)
         {
             for(var i = 7; i > 0; i--)
-            {
-               
+            {             
             db.Recipes.Add(new Recipe() { Volume = i - 0.1, AmountPerDay = i, FinishDate ="2018-10-01", StartDate = "2018-06-30",MedicamentId=i,PatientId=patientid });
             }
         }
